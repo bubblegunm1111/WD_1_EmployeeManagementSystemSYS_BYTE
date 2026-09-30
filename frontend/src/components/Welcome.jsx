@@ -112,19 +112,14 @@ function Welcome() {
               <Sparkles size={16} /> Modern HR Management Platform
             </div>
             
-            <h1 className="text-6xl md:text-[68px] font-black text-[#111827] tracking-tight leading-[1.1] mb-6 min-h-[140px] md:min-h-[160px]">
-              {typedText.length <= line1.length ? (
-                typedText
-              ) : (
-                <>
-                  {line1}
-                  <br />
-                  <span className="text-[#6366f1] whitespace-nowrap">
-                    {typedText.substring(line1.length)}
-                  </span>
-                </>
-              )}
-              <span className="animate-pulse text-[#6366f1]">|</span>
+            <h1 className="text-6xl md:text-[68px] font-black text-[#111827] tracking-tight leading-[1.1] mb-6 h-[140px] md:h-[160px] flex flex-col justify-end">
+              <div>
+                {typedText.substring(0, line1.length)}
+              </div>
+              <div className="text-[#6366f1] whitespace-nowrap">
+                {typedText.length > line1.length ? typedText.substring(line1.length) : ' '}
+                <span className="animate-pulse text-[#6366f1]">|</span>
+              </div>
             </h1>
             
             <p className="text-lg md:text-xl text-gray-500 leading-relaxed mb-10 font-medium max-w-xl">
@@ -252,7 +247,7 @@ const FeaturesCarousel = () => {
             
             // Normalize distance relative to viewport width
             const maxDist = viewportW * 0.6; 
-            let normalized = distance / maxDist;
+            let normalized = maxDist > 0 ? distance / maxDist : 0;
             if (normalized > 1) normalized = 1;
             if (normalized < -1) normalized = -1;
 
