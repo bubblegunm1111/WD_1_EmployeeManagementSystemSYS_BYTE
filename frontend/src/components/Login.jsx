@@ -24,6 +24,8 @@ function Login() {
   const location = useLocation();
   const role = location.state?.role || 'employee'; 
 
+  const [isFirstTime, setIsFirstTime] = useState(false);
+
   // Force login view for employees
   if (role === 'employee' && !isLogin) {
     setIsLogin(true);
@@ -140,7 +142,7 @@ function Login() {
             <input
               type={showPassword ? "text" : "password"}
               required
-              placeholder="Password"
+              placeholder={role === 'employee' && isFirstTime ? 'Temporary password' : 'Password'}
               value={password}
               onChange={e => setPassword(e.target.value)}
               className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-transparent focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] focus:bg-white placeholder-gray-400 font-semibold transition"
@@ -158,6 +160,23 @@ function Login() {
             </button>
           </div>
 
+          {role === 'employee' && (
+            <div className="flex items-center justify-between mt-1 px-2">
+              <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
+                <input
+                  type="checkbox"
+                  checked={isFirstTime}
+                  onChange={(e) => setIsFirstTime(e.target.checked)}
+                  className="w-4 h-4 rounded text-[#8b8cf8] focus:ring-[#8b8cf8] border-gray-300"
+                />
+                First time logging in?
+              </label>
+              <button type="button" className="text-sm font-semibold text-[#8b8cf8] hover:text-[#7778f2] transition">
+                Forgot password?
+              </button>
+            </div>
+          )}
+
           <button
             type="submit"
             className="w-full mt-2 bg-[#1a1a1a] text-white font-bold py-4 rounded-2xl hover:bg-gray-800 transition shadow-lg transform hover:-translate-y-0.5 cursor-pointer text-base"
@@ -165,7 +184,7 @@ function Login() {
             {isLogin ? 'Sign In' : 'Sign Up'}
           </button>
           
-          {role === 'employee' && (
+          {role === 'admin' && (
             <div className="text-center mt-1">
               <button type="button" className="text-sm font-semibold text-gray-400 hover:text-[#8b8cf8] transition">
                 Forgot your password?
