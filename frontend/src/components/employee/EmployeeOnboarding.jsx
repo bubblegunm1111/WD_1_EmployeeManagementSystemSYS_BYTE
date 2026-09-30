@@ -86,12 +86,12 @@ function EmployeeOnboarding() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8f9fc] py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen flex items-start justify-center bg-[#f8f9fc] py-12 px-4 sm:px-6 lg:px-8 relative overflow-x-hidden">
       {/* Decorative blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[80px] opacity-40 bg-[#b5cdff]"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full blur-[60px] opacity-30 bg-[#ffb5d4]"></div>
+      <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[80px] opacity-40 bg-[#b5cdff]"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full blur-[60px] opacity-30 bg-[#ffb5d4]"></div>
 
-      <div className="max-w-2xl w-full bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative z-10 transition-all duration-300">
+      <div className="max-w-2xl w-full bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative z-10 transition-all duration-300 my-8">
         
         {step === 1 ? (
           <div>
