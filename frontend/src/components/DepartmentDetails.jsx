@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MoreHorizontal, Users, Plus, Edit2, Trash2 } from 'lucide-react';
@@ -52,7 +53,7 @@ function DepartmentDetails() {
       setIsEditDeptOpen(false);
       fetchData();
     } catch (err) {
-      alert("Failed to update department");
+      toast.error("Failed to update department");
     }
   };
 
@@ -69,7 +70,7 @@ function DepartmentDetails() {
       setEditTeamId(null);
       fetchData();
     } catch (err) {
-      alert(`Failed to ${editTeamId ? 'update' : 'create'} team`);
+      toast.error(`Failed to ${editTeamId ? 'update' : 'create'} team`);
     }
   };
 
@@ -90,7 +91,7 @@ function DepartmentDetails() {
         await api.delete(`/teams/${teamId}`);
         fetchData();
       } catch (err) {
-        alert('Failed to delete team');
+        toast.error('Failed to delete team');
       }
     }
   };
@@ -113,7 +114,7 @@ function DepartmentDetails() {
         fetchData();
       }
     } catch (err) {
-      alert("Failed to assign employee");
+      toast.error("Failed to assign employee");
     }
   };
 
@@ -280,7 +281,7 @@ function DepartmentDetails() {
                               await api.put(`/employees/${emp.id}`, { ...emp, department_id: null, team_id: null, manager_id: null });
                               fetchData();
                             } catch (err) {
-                              alert('Failed to remove employee');
+                              toast.error('Failed to remove employee');
                             }
                           }
                         }}

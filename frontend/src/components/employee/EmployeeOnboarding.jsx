@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -75,7 +76,7 @@ function EmployeeOnboarding() {
       navigate('/employee');
     } catch (err) {
       console.error(err);
-      alert('Failed to save profile information.');
+      toast.error('Failed to save profile information.');
     } finally {
       setSubmitting(false);
     }

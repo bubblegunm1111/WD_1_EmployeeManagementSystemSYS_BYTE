@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Dashboard from './components/Dashboard';
 import AdminOverview from './components/AdminOverview';
 import Departments from './components/Departments';
@@ -100,6 +101,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <Toaster position="top-center" reverseOrder={false} />
         <AppRoutes />
       </Router>
     </AuthProvider>

@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import EmployeeList from './EmployeeList';
 import EmployeeModal from './EmployeeModal';
@@ -173,7 +174,7 @@ function Dashboard() {
                         console.error('Failed to import row', i, err);
                       }
                     }
-                    alert(`Successfully imported ${successCount} employees!`);
+                    toast.success(`Successfully imported ${successCount} employees!`);
                     setRefreshTrigger(prev => prev + 1);
                   };
                   reader.readAsText(file);

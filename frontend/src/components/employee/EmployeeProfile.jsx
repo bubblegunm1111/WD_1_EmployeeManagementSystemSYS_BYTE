@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Mail, Phone, MapPin, Briefcase, Calendar, User as UserIcon, Shield, Activity, Users, Loader, Edit2, X, Check, CreditCard } from 'lucide-react';
@@ -74,7 +75,7 @@ export default function EmployeeProfile() {
       setIsEditing(false);
     } catch (err) {
       console.error(err);
-      alert('Failed to save profile information.');
+      toast.error('Failed to save profile information.');
     } finally {
       setSubmitting(false);
     }

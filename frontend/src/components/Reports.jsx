@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { FileText, Users, Clock, Calendar as CalendarIcon, Download, MoreHorizontal, Plus } from 'lucide-react';
 import ReportConfigModal from './ReportConfigModal';
@@ -47,7 +48,7 @@ function Reports() {
       fetchHistory(); // Refresh history
     } catch (err) {
       console.error('Failed to generate report', err);
-      alert('Failed to generate report');
+      toast.error('Failed to generate report');
     }
   };
 

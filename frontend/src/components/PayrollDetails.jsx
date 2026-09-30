@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, Save } from 'lucide-react';
@@ -46,7 +47,7 @@ function PayrollDetails() {
       });
     } catch (error) {
       console.error('Error fetching payroll details:', error);
-      alert('Failed to load payroll details.');
+      toast.error('Failed to load payroll details.');
     } finally {
       setLoading(false);
     }
@@ -59,7 +60,7 @@ function PayrollDetails() {
       fetchPayrollDetails();
       // maybe show a toast
     } catch (error) {
-      alert('Failed to save adjustments');
+      toast.error('Failed to save adjustments');
     }
   };
 
@@ -68,7 +69,7 @@ function PayrollDetails() {
       await api.post(`/payroll/${id}/pay`, { month });
       fetchPayrollDetails();
     } catch (error) {
-      alert('Failed to mark as paid');
+      toast.error('Failed to mark as paid');
     }
   };
 

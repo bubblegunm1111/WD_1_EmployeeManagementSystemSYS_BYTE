@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { Edit2, Trash2, MoreHorizontal, Mail, DollarSign, Clock, Briefcase } from 'lucide-react';
 import api from '../api';
@@ -44,7 +45,7 @@ function EmployeeList({ refreshTrigger, searchQuery, departmentFilter, statusFil
         setSelectedEmployeeIds([]);
       } catch (error) {
         console.error('Failed to delete employees', error);
-        alert('Failed to delete some employees.');
+        toast.error('Failed to delete some employees.');
       }
     }
   };

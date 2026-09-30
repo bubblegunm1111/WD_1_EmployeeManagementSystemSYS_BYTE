@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { Building, Users, MoreHorizontal, Plus, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -41,7 +42,7 @@ function Departments() {
       await api.delete(`/departments/${id}`);
       fetchDepartments();
     } catch (err) {
-      alert("Failed to delete department");
+      toast.error("Failed to delete department");
     }
   };
 

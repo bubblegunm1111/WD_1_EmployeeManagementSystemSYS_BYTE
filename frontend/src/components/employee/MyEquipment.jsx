@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState } from 'react';
 import { Laptop, Monitor, Headphones, AlertTriangle, PlusCircle } from 'lucide-react';
 
@@ -113,7 +114,7 @@ export default function MyEquipment() {
                 Cancel
               </button>
               <button onClick={() => {
-                alert('Issue reported successfully. IT will reach out to you.');
+                toast.success('Issue reported successfully. IT will reach out to you.');
                 setShowIssueModal(false);
               }} className="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors">
                 Submit Report

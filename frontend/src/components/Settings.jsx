@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState } from 'react';
 import { 
   Building2, Clock, CalendarDays, Wallet, Users, 
@@ -25,7 +26,7 @@ export default function Settings() {
     // Simulate API call
     setTimeout(() => {
       setIsSaving(false);
-      alert('Settings saved successfully!');
+      toast.success('Settings saved successfully!');
     }, 800);
   };
 

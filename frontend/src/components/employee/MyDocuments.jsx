@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useRef } from 'react';
 import { FileText, Download, Eye, Upload, Filter, Search, AlertCircle, Folder, CheckCircle, X } from 'lucide-react';
 
@@ -183,7 +184,7 @@ export default function MyDocuments() {
             </div>
             
             <div className="border-2 border-dashed border-gray-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:border-indigo-500 hover:bg-indigo-50/50 transition-colors cursor-pointer mb-6" onClick={() => fileInputRef.current?.click()}>
-              <input type="file" className="hidden" ref={fileInputRef} onChange={() => { alert('Mock File selected!'); setIsUploadOpen(false); }} />
+              <input type="file" className="hidden" ref={fileInputRef} onChange={() => { toast.success('Mock File selected!'); setIsUploadOpen(false); }} />
               <div className="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center mb-4">
                 <Upload size={24} />
               </div>
@@ -202,7 +203,7 @@ export default function MyDocuments() {
               <button onClick={() => setIsUploadOpen(false)} className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors">
                 Cancel
               </button>
-              <button onClick={() => { alert('Upload started!'); setIsUploadOpen(false); }} className="flex-1 py-3 bg-[#4f46e5] text-white rounded-xl font-bold hover:bg-[#4338ca] transition-colors">
+              <button onClick={() => { toast.success('Upload started!'); setIsUploadOpen(false); }} className="flex-1 py-3 bg-[#4f46e5] text-white rounded-xl font-bold hover:bg-[#4338ca] transition-colors">
                 Upload File
               </button>
             </div>

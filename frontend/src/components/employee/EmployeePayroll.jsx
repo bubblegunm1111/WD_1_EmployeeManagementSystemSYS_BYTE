@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { Download, AlertCircle, CheckCircle, FileText, X, Calendar as CalendarIcon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -75,9 +76,9 @@ function EmployeePayroll() {
       });
       setIsIssueOpen(false);
       setIssueData({ issue_type: 'Salary', description: '' });
-      alert('Issue reported successfully. Admin has been notified.');
+      toast.success('Issue reported successfully. Admin has been notified.');
     } catch (error) {
-      alert('Failed to report issue.');
+      toast.error('Failed to report issue.');
     }
   };
 

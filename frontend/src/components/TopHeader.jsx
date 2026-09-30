@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, Grid, Bell, Plus, PanelLeftClose, PanelLeftOpen, LogOut, User, Settings, Menu } from 'lucide-react';
@@ -138,7 +139,7 @@ function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen,
         </div>
 
         <button 
-          onClick={() => alert("App Switcher Opened")}
+          onClick={() => toast.success("App Switcher Opened")}
           className="text-gray-400 hover:text-gray-600 transition cursor-pointer p-1"
         >
           <Grid size={20} />

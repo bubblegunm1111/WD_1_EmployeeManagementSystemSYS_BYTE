@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React from 'react';
 import { ArrowLeft, Download, Printer } from 'lucide-react';
 import jsPDF from 'jspdf';
@@ -9,7 +10,7 @@ function ReportViewer({ reportData, onBack }) {
   // Export to CSV Function
   const exportToCSV = () => {
     if (!reportData.data || reportData.data.length === 0) {
-      alert("No data available to export.");
+      toast.error("No data available to export.");
       return;
     }
 

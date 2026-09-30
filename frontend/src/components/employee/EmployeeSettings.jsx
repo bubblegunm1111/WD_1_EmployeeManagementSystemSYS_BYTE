@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { User, Bell, Palette, Shield, Link2, LogOut, Check } from 'lucide-react';
@@ -237,7 +238,7 @@ export default function EmployeeSettings() {
 
           {/* Global Save Button */}
           <div className="mt-10 pt-6">
-            <button onClick={() => alert('Settings Saved!')} className="px-6 py-3 bg-[#4f46e5] text-white rounded-xl font-bold hover:bg-[#4338ca] transition-colors shadow-md">
+            <button onClick={() => toast.success('Settings Saved!')} className="px-6 py-3 bg-[#4f46e5] text-white rounded-xl font-bold hover:bg-[#4338ca] transition-colors shadow-md">
               Save Changes
             </button>
           </div>
