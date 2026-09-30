@@ -174,63 +174,65 @@ export default function TasksList({ employeeId, isAdmin, employeeName }) {
         </div>
       )}
 
-      {/* Task Table */}
-      <div className={`flex-1 overflow-y-auto p-6 transition-all duration-300 ${selectedTask ? (isAdmin ? 'mr-[320px]' : 'mr-[384px]') : ''}`}>
-        {tasks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-gray-100 shadow-inner">
-              <CheckCircle size={32} className="text-gray-300" />
+      {/* Main Content Area */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Task Table */}
+        <div className="flex-1 overflow-y-auto p-6 transition-all duration-300">
+          {tasks.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-gray-100 shadow-inner">
+                <CheckCircle size={32} className="text-gray-300" />
+              </div>
+              <h3 className="text-[#111827] font-extrabold text-xl mb-2">No tasks right now</h3>
+              <p className="text-gray-500 font-medium max-w-sm">
+                {isAdmin ? "Assign a task to this employee to get them started." : "You're all caught up! Enjoy your free time."}
+              </p>
             </div>
-            <h3 className="text-[#111827] font-extrabold text-xl mb-2">No tasks right now</h3>
-            <p className="text-gray-500 font-medium max-w-sm">
-              {isAdmin ? "Assign a task to this employee to get them started." : "You're all caught up! Enjoy your free time."}
-            </p>
-          </div>
-        ) : (
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-[#fcfcfc] border-b border-gray-200 text-[10px] font-extrabold text-gray-500 tracking-widest uppercase">
-                  <th className="py-4 px-6">Task</th>
-                  <th className="py-4 px-6">Due</th>
-                  <th className="py-4 px-6">Priority</th>
-                  <th className="py-4 px-6">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {tasks.map(task => (
-                  <tr 
-                    key={task.id} 
-                    onClick={() => setSelectedTask(task)}
-                    className={`hover:bg-gray-50 cursor-pointer transition-colors ${selectedTask?.id === task.id ? 'bg-indigo-50/50' : ''}`}
-                  >
-                    <td className="py-4 px-6">
-                      <p className={`font-bold text-[15px] ${task.status === 'Completed' ? 'text-gray-400 line-through' : 'text-[#111827]'}`}>
-                        {task.title}
-                      </p>
-                    </td>
-                    <td className="py-4 px-6 font-medium text-sm text-gray-600">
-                      {task.due === 'Today' ? <span className="text-red-500 font-bold">Today</span> : task.due}
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${getPriorityColor(task.priority)}`}>
-                        {getPriorityDot(task.priority)} {task.priority}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      {getStatusBadge(task.status)}
-                    </td>
+          ) : (
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-[#fcfcfc] border-b border-gray-200 text-[10px] font-extrabold text-gray-500 tracking-widest uppercase">
+                    <th className="py-4 px-6">Task</th>
+                    <th className="py-4 px-6">Due</th>
+                    <th className="py-4 px-6">Priority</th>
+                    <th className="py-4 px-6">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {tasks.map(task => (
+                    <tr 
+                      key={task.id} 
+                      onClick={() => setSelectedTask(task)}
+                      className={`hover:bg-gray-50 cursor-pointer transition-colors ${selectedTask?.id === task.id ? 'bg-indigo-50/50' : ''}`}
+                    >
+                      <td className="py-4 px-6">
+                        <p className={`font-bold text-[15px] ${task.status === 'Completed' ? 'text-gray-400 line-through' : 'text-[#111827]'}`}>
+                          {task.title}
+                        </p>
+                      </td>
+                      <td className="py-4 px-6 font-medium text-sm text-gray-600">
+                        {task.due === 'Today' ? <span className="text-red-500 font-bold">Today</span> : task.due}
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${getPriorityColor(task.priority)}`}>
+                          {getPriorityDot(task.priority)} {task.priority}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        {getStatusBadge(task.status)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
-      {/* Slide-out Detail Panel */}
-      {selectedTask && (
-        <div className={`${isAdmin ? 'w-80' : 'w-96'} bg-white border-l border-gray-200 shadow-2xl flex flex-col absolute right-0 top-0 bottom-0 z-20 animate-fade-in`}>
+        {/* Slide-out Detail Panel */}
+        {selectedTask && (
+          <div className={`${isAdmin ? 'w-80' : 'w-96'} flex-shrink-0 bg-white border-l border-gray-200 shadow-2xl flex flex-col z-20 animate-fade-in`}>
           
           <div className="p-5 border-b border-gray-100 flex justify-between items-start bg-gray-50/50">
             <div>
@@ -324,6 +326,8 @@ export default function TasksList({ employeeId, isAdmin, employeeName }) {
 
         </div>
       )}
+      
+      </div>
 
       {/* Task Modal (Create/Edit) */}
       {isModalOpen && (

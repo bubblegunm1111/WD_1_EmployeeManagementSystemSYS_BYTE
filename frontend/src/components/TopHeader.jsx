@@ -141,7 +141,7 @@ function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen,
             className="relative text-gray-400 hover:text-gray-600 transition cursor-pointer p-1"
           >
             <Bell size={20} />
-            {notifications.filter(n => !n.is_read).length > 0 && (
+            {Array.isArray(notifications) && notifications.filter(n => !n.is_read).length > 0 && (
               <span className="absolute top-1 right-1 w-2 h-2 bg-[#fca5a5] rounded-full border-2 border-[#fdfcfa]"></span>
             )}
           </button>
