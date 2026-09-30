@@ -34,7 +34,7 @@ function Dashboard() {
       <div className="flex-1 flex flex-col overflow-hidden px-8 py-6 max-w-[1600px] mx-auto">
         
         {/* Summary Cards */}
-        <div className="grid grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div onClick={() => setStatusFilter('')} className="bg-[#f3e8ff] p-5 rounded-3xl border border-[#e9d5ff] flex items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-white/60 rounded-xl flex items-center justify-center text-[#9333ea]">
@@ -89,9 +89,9 @@ function Dashboard() {
         </div>
 
         {/* Search & Filters */}
-        <div className="flex items-center justify-between mb-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex items-center gap-4 flex-1">
-            <div className="relative w-80">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between mb-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
+            <div className="relative w-full sm:w-80">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               <input
                 type="text"
@@ -126,7 +126,7 @@ function Dashboard() {
             </select>
           </div>
 
-          <div className="flex items-center gap-2 bg-gray-50 p-1 rounded-full border border-gray-200">
+          <div className="flex items-center justify-between gap-2 bg-gray-50 p-1 rounded-full border border-gray-200 self-end lg:self-auto">
             <label className="px-4 py-1.5 rounded-full hover:bg-white hover:shadow-sm text-sm font-bold text-gray-500 hover:text-[#8b8cf8] transition flex items-center gap-2 cursor-pointer">
               <Upload size={16} /> Import
               <input 

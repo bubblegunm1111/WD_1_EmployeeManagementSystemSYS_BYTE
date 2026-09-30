@@ -147,10 +147,10 @@ function Leave() {
   };
 
   return (
-    <div className="flex flex-1 h-full w-full bg-[#fdfcfa] overflow-hidden p-0">
+    <div className="flex flex-col xl:flex-row flex-1 h-full w-full bg-[#fdfcfa] overflow-y-auto xl:overflow-hidden p-0">
       
       {/* Left Column - Main Content */}
-      <div className="flex-1 flex flex-col h-full px-6 sm:px-12 py-10 min-h-0 min-w-0">
+      <div className="flex-1 flex flex-col xl:h-full px-6 sm:px-12 py-10 min-h-0 min-w-0 xl:overflow-y-auto custom-scrollbar">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 shrink-0">
@@ -397,7 +397,7 @@ function Leave() {
       </div>
 
       {/* RIGHT COLUMN - Widgets */}
-      <div className="w-[340px] shrink-0 flex flex-col gap-6 overflow-y-auto no-scrollbar pt-6 pr-6 pb-6 border-l border-gray-200 pl-6 bg-gray-50/30">
+      <div className="w-full xl:w-[340px] shrink-0 flex flex-col gap-6 xl:overflow-y-auto custom-scrollbar pt-6 pr-6 pb-6 border-t xl:border-t-0 xl:border-l border-gray-200 pl-6 bg-gray-50/30">
         
         {/* Calendar Widget */}
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
