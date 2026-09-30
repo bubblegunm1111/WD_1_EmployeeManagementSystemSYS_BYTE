@@ -15,9 +15,17 @@ function EmployeeDashboard() {
   const [breakDurationMinutes, setBreakDurationMinutes] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  const [orgName, setOrgName] = useState('your organization');
+
   // Live timer for current time
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    
+    // Fetch organization name
+    api.get('/auth/organization').then(res => {
+      if (res.data && res.data.name) setOrgName(res.data.name);
+    }).catch(console.error);
+    
     return () => clearInterval(timer);
   }, []);
 
@@ -129,7 +137,7 @@ function EmployeeDashboard() {
         {/* Header */}
         <div className="mb-10">
           <h1 className="text-4xl font-extrabold tracking-tight text-[#111827]">{getGreeting()}, {user?.username?.split(' ')[0] || 'Employee'} 👋</h1>
-          <p className="text-gray-500 font-medium mt-2 text-lg">Here's your agenda for today, {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}.</p>
+          <p className="text-gray-500 font-medium mt-2 text-lg">Here's your agenda for today at <strong className="text-[#4f46e5]">{orgName}</strong>, {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}.</p>
         </div>
 
         {/* Top Summary Cards */}
