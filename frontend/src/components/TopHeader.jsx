@@ -46,7 +46,7 @@ function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen,
       };
 
       fetchNotifs();
-      const interval = setInterval(fetchNotifs, 10000);
+      const interval = setInterval(fetchNotifs, 3000);
       return () => clearInterval(interval);
     }
   }, [role, user]);
@@ -154,7 +154,7 @@ function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen,
                 <span onClick={markAllRead} className="text-xs text-[#4f46e5] font-semibold cursor-pointer">Mark all read</span>
               </div>
               
-              {notifications.length === 0 ? (
+              {(!Array.isArray(notifications) || notifications.length === 0) ? (
                 <div className="p-4 text-sm text-gray-500 text-center">
                   No new notifications
                 </div>

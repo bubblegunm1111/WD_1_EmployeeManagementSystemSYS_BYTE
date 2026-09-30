@@ -75,9 +75,15 @@ function EmployeeDashboard() {
     syncAttendance();
     
     if (employeeId) {
-      api.get(`/tasks/${employeeId}`)
-        .then(res => setTasks(res.data))
-        .catch(console.error);
+      const fetchTasks = () => {
+        api.get(`/tasks/${employeeId}`)
+          .then(res => setTasks(res.data))
+          .catch(console.error);
+      };
+      
+      fetchTasks();
+      const interval = setInterval(fetchTasks, 3000);
+      return () => clearInterval(interval);
     }
     // eslint-disable-next-line
   }, [employeeId]);

@@ -58,7 +58,10 @@ function EditEmployeeModal({ isOpen, onClose, onSuccess, initialData }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className={`bg-white rounded-3xl shadow-2xl w-full ${activeTab === 'tasks' ? 'max-w-5xl' : 'max-w-2xl'} overflow-hidden flex flex-col max-h-[90vh] transition-all duration-300`}>
+      <div 
+        className="bg-white rounded-3xl shadow-2xl w-full overflow-hidden flex flex-col max-h-[90vh] transition-all duration-300"
+        style={{ maxWidth: activeTab === 'tasks' ? '1024px' : '672px' }}
+      >
         
         <div className="flex items-center justify-between p-8 bg-white border-b border-gray-100 pb-0">
           <div className="flex-1">

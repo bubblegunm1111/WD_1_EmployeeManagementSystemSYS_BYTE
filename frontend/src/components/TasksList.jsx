@@ -175,20 +175,26 @@ export default function TasksList({ employeeId, isAdmin, employeeName }) {
       )}
 
       {/* Task Table */}
-      <div className={`flex-1 overflow-hidden transition-all ${selectedTask ? (isAdmin ? 'mr-80' : 'mr-96') : ''}`}>
+      <div className={`flex-1 overflow-y-auto p-6 transition-all duration-300 ${selectedTask ? (isAdmin ? 'mr-[320px]' : 'mr-[384px]') : ''}`}>
         {tasks.length === 0 ? (
-          <div className="bg-gray-50 rounded-3xl border border-gray-100 p-12 text-center text-gray-500 font-medium">
-            No tasks found. Create one to get started!
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-gray-100 shadow-inner">
+              <CheckCircle size={32} className="text-gray-300" />
+            </div>
+            <h3 className="text-[#111827] font-extrabold text-xl mb-2">No tasks right now</h3>
+            <p className="text-gray-500 font-medium max-w-sm">
+              {isAdmin ? "Assign a task to this employee to get them started." : "You're all caught up! Enjoy your free time."}
+            </p>
           </div>
         ) : (
-          <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm">
-            <table className="w-full text-left border-collapse">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+            <table className="w-full text-left">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Task</th>
-                  <th className="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Due</th>
-                  <th className="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Priority</th>
-                  <th className="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                <tr className="bg-[#fcfcfc] border-b border-gray-200 text-[10px] font-extrabold text-gray-500 tracking-widest uppercase">
+                  <th className="py-4 px-6">Task</th>
+                  <th className="py-4 px-6">Due</th>
+                  <th className="py-4 px-6">Priority</th>
+                  <th className="py-4 px-6">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
