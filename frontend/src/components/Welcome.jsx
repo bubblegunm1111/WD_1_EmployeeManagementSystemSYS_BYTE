@@ -33,7 +33,7 @@ function Welcome() {
   };
 
   return (
-    <div className="h-screen w-full bg-[#fcfcfd] flex flex-col font-sans overflow-y-auto overflow-x-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#fcfcfd] to-[#f4f5ff] flex flex-col font-sans overflow-x-hidden">
       
       {/* Decorative background shape */}
       <div className="absolute top-40 left-[-20%] w-[800px] h-[800px] bg-[#eef0ff] rounded-full blur-[100px] opacity-70 pointer-events-none"></div>
@@ -190,7 +190,7 @@ const FeaturesCarousel = () => {
   ];
 
   return (
-    <section className="w-full bg-[#f4f5ff] py-24 relative z-20">
+    <section className="w-full bg-transparent py-24 relative z-20">
       <div className="max-w-7xl mx-auto px-6">
         
         <div className="text-center mb-16 relative z-10">
