@@ -218,10 +218,23 @@ function EmployeeDashboard() {
                 </button>
               </div>
               <div className="space-y-4">
-                {tasks.filter(t => t.status !== 'Done').slice(0, 3).map(t => (
+                {tasks.filter(t => t.status !== 'Completed').slice(0, 3).map(t => (
                   <div key={t.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 cursor-pointer hover:border-[#4f46e5] transition" onClick={() => navigate('/employee/tasks')}>
                     <div className="flex items-center gap-4">
-                      <button className="w-6 h-6 rounded-full border-2 border-gray-300 hover:border-green-500 transition-colors"></button>
+                      <button 
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          try {
+                            await api.put(`/tasks/${t.id}`, { status: 'Completed' });
+                            setTasks(prev => prev.map(task => task.id === t.id ? { ...task, status: 'Completed' } : task));
+                            toast.success("Task marked as completed!");
+                          } catch (err) {
+                            console.error(err);
+                            toast.error("Failed to update task");
+                          }
+                        }}
+                        className="w-6 h-6 rounded-full border-2 border-gray-300 hover:border-green-500 hover:bg-green-50 transition-colors"
+                      ></button>
                       <div>
                         <p className="font-bold text-[#111827]">{t.title}</p>
                         <p className={`text-xs font-bold mt-1 uppercase tracking-wider ${t.priority === 'High' ? 'text-red-500' : t.priority === 'Medium' ? 'text-yellow-500' : 'text-green-500'}`}>
@@ -231,7 +244,7 @@ function EmployeeDashboard() {
                     </div>
                   </div>
                 ))}
-                {tasks.filter(t => t.status !== 'Done').length === 0 && (
+                {tasks.filter(t => t.status !== 'Completed').length === 0 && (
                   <p className="text-sm font-bold text-gray-400 text-center py-4">No priority tasks right now!</p>
                 )}
               </div>
