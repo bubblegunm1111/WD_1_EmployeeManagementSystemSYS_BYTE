@@ -19,6 +19,17 @@ async function getOrCreatePayrollRecord(db, employee, month) {
     ]);
     
     record = await db.get('SELECT * FROM payroll_records WHERE id = ?', [result.lastID]);
+  } else if (record.status === 'Draft') {
+    // Auto-sync the salary fields from the employee profile if the payroll is still a Draft
+    await db.run(`
+      UPDATE payroll_records SET
+        basic_salary = ?, accommodation = ?, transportation = ?
+      WHERE id = ?
+    `, [employee.basic_salary || 0, employee.accommodation || 0, employee.transportation || 0, record.id]);
+    
+    record.basic_salary = employee.basic_salary || 0;
+    record.accommodation = employee.accommodation || 0;
+    record.transportation = employee.transportation || 0;
   }
   return record;
 }

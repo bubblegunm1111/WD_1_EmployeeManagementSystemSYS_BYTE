@@ -19,15 +19,21 @@ function Login() {
   
   const [error, setError] = useState('');
   
-  const { login, signup, loginWithGoogle } = useAuth();
+  const { user, role: authRole, login, signup, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const role = location.state?.role || 'employee'; 
+  const uiRole = location.state?.role || 'employee'; 
 
   const [isFirstTime, setIsFirstTime] = useState(false);
 
+  React.useEffect(() => {
+    if (user && authRole) {
+      navigate(authRole === 'admin' ? '/admin' : '/employee');
+    }
+  }, [user, authRole, navigate]);
+
   // Force login view for employees
-  if (role === 'employee' && !isLogin) {
+  if (uiRole === 'employee' && !isLogin) {
     setIsLogin(true);
   }
 
@@ -35,10 +41,10 @@ function Login() {
     e.preventDefault();
     try {
       if (isLogin) {
-        await login(username || email, password, role);
+        await login(username || email, password, uiRole);
         
         // If employee, check if they need a password reset or onboarding
-        if (role === 'employee') {
+        if (uiRole === 'employee') {
           try {
             const loginEmail = username || email;
             const res = await api.get(`/employees/by-email?email=${encodeURIComponent(loginEmail)}`);
@@ -57,29 +63,34 @@ function Login() {
         }
         
       } else {
-        await signup(email, password, role, { fullName, orgName });
+        await signup(email, password, uiRole, { fullName, orgName });
       }
-      navigate(role === 'admin' ? '/admin' : '/employee');
+      navigate(uiRole === 'admin' ? '/admin' : '/employee');
     } catch (err) {
       console.error(err);
-      setError('Invalid credentials or user already exists.');
+      setError('Password or email is wrong');
     }
   };
 
   const handleGoogleAuth = async (e) => {
     e.preventDefault();
     try {
-      await loginWithGoogle(role);
-      navigate(role === 'admin' ? '/admin' : '/employee');
+      await loginWithGoogle(uiRole);
+      navigate(uiRole === 'admin' ? '/admin' : '/employee');
     } catch (err) {
-      setError('Google sign in failed');
+      console.error(err);
+      if (err.code === 'auth/popup-blocked') {
+        setError('Popup blocked! Please click the icon in your address bar (top right) to allow popups from Vercel.');
+      } else {
+        setError('Google sign in failed: ' + err.message);
+      }
     }
   }
 
   return (
     <div className="h-full w-full flex items-center justify-center bg-[#f8f9fc] overflow-hidden relative">
-      <div className={`absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[80px] opacity-40 ${role === 'admin' ? 'bg-[#ffdf85]' : 'bg-[#b5cdff]'}`}></div>
-      <div className={`absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full blur-[60px] opacity-30 ${role === 'admin' ? 'bg-[#ffb5d4]' : 'bg-[#eaf4eb]'}`}></div>
+      <div className={`absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[80px] opacity-40 ${uiRole === 'admin' ? 'bg-[#ffdf85]' : 'bg-[#b5cdff]'}`}></div>
+      <div className={`absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full blur-[60px] opacity-30 ${uiRole === 'admin' ? 'bg-[#ffb5d4]' : 'bg-[#eaf4eb]'}`}></div>
 
       <div className="bg-white/80 backdrop-blur-xl p-10 md:p-12 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] max-w-md w-full border border-white relative z-10 transition-all duration-300">
         
@@ -88,7 +99,7 @@ function Login() {
             {isLogin ? 'Welcome back' : 'Create an account'}
           </h1>
           <p className="text-sm font-semibold text-gray-400">
-            {role === 'admin' ? 'Admin Portal' : 'Employee Portal'}
+            {uiRole === 'admin' ? 'Admin Portal' : 'Employee Portal'}
           </p>
         </div>
 
@@ -107,7 +118,7 @@ function Login() {
             />
           )}
 
-          {!isLogin && role === 'admin' && (
+          {!isLogin && uiRole === 'admin' && (
             <input
               type="text"
               required
@@ -131,7 +142,7 @@ function Login() {
             <input
               type="text"
               required
-              placeholder={role === 'employee' ? 'Work email' : 'Username or Email'}
+              placeholder={uiRole === 'employee' ? 'Work email' : 'Username or Email'}
               value={username}
               onChange={e => setUsername(e.target.value)}
               className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-transparent focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] focus:bg-white placeholder-gray-400 font-semibold transition"
@@ -142,7 +153,7 @@ function Login() {
             <input
               type={showPassword ? "text" : "password"}
               required
-              placeholder={role === 'employee' && isFirstTime ? 'Temporary password' : 'Password'}
+              placeholder={uiRole === 'employee' && isFirstTime ? 'Temporary password' : 'Password'}
               value={password}
               onChange={e => setPassword(e.target.value)}
               className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-transparent focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] focus:bg-white placeholder-gray-400 font-semibold transition"
@@ -160,7 +171,7 @@ function Login() {
             </button>
           </div>
 
-          {role === 'employee' && (
+          {uiRole === 'employee' && (
             <div className="flex items-center justify-between mt-1 px-2">
               <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
                 <input
@@ -184,7 +195,7 @@ function Login() {
             {isLogin ? 'Sign In' : 'Sign Up'}
           </button>
           
-          {role === 'admin' && (
+          {uiRole === 'admin' && (
             <div className="text-center mt-1">
               <button type="button" className="text-sm font-semibold text-gray-400 hover:text-[#8b8cf8] transition">
                 Forgot your password?
@@ -193,7 +204,7 @@ function Login() {
           )}
         </form>
 
-        {role === 'admin' && (
+        {uiRole === 'admin' && (
           <>
             <div className="relative flex items-center py-6">
               <div className="flex-grow border-t border-gray-200"></div>

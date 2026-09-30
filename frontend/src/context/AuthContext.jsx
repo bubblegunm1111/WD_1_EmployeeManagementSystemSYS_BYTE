@@ -2,7 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
-  signInWithPopup, 
+  signInWithPopup,
+  signInWithRedirect, 
   signOut, 
   onAuthStateChanged 
 } from 'firebase/auth';
@@ -24,9 +25,16 @@ export const AuthProvider = ({ children }) => {
           email: firebaseUser.email,
           username: firebaseUser.displayName || firebaseUser.email.split('@')[0]
         });
-        // Retrieve role from localStorage for now (would typically be stored in Firestore claims)
-        const storedRole = localStorage.getItem('role') || 'employee';
-        setRole(storedRole);
+        // Retrieve role from localStorage for now
+        let resolvedRole = localStorage.getItem('role') || 'employee';
+        
+        // Hardcode the primary admin email to guarantee admin access even if localStorage is wiped by adblockers during redirect
+        if (firebaseUser.email === 'sys1.admin.system@gmail.com') {
+          resolvedRole = 'admin';
+          localStorage.setItem('role', 'admin');
+        }
+
+        setRole(resolvedRole);
       } else {
         setUser(null);
         setRole(null);
@@ -55,7 +63,16 @@ export const AuthProvider = ({ children }) => {
   const loginWithGoogle = async (selectedRole) => {
     localStorage.setItem('role', selectedRole);
     const result = await signInWithPopup(auth, googleProvider);
-    setRole(selectedRole);
+    
+    // We still keep the hardcoded email check in onAuthStateChanged,
+    // but we can also set the state here immediately for snappier UX
+    if (result.user.email === 'sys1.admin.system@gmail.com') {
+      setRole('admin');
+      localStorage.setItem('role', 'admin');
+    } else {
+      setRole(selectedRole);
+    }
+    
     return result;
   };
 

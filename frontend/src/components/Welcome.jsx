@@ -46,9 +46,9 @@ function Welcome() {
         </div>
         
         <nav className="hidden md:flex items-center gap-8 text-sm font-bold text-gray-400">
-          <a href="#" className="text-gray-900 hover:text-[#8b8cf8] transition">Home</a>
-          <a href="#" className="hover:text-[#8b8cf8] transition">About Us</a>
-          <a href="#" className="hover:text-[#8b8cf8] transition">Contact Us</a>
+          <button onClick={() => navigate('/')} className="text-gray-900 transition cursor-pointer">Home</button>
+          <button onClick={() => navigate('/about')} className="hover:text-[#8b8cf8] transition cursor-pointer">About Us</button>
+          <button onClick={() => navigate('/contact')} className="hover:text-[#8b8cf8] transition cursor-pointer">Contact Us</button>
         </nav>
         
         <div className="flex items-center gap-6">

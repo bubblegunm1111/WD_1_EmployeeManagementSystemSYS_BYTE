@@ -86,7 +86,7 @@ function EmployeeOnboarding() {
   }
 
   return (
-    <div className="h-full w-full overflow-y-auto flex items-start justify-center bg-[#f8f9fc] py-12 px-4 sm:px-6 lg:px-8 relative overflow-x-hidden">
+    <div className="h-screen w-full overflow-y-auto flex items-start justify-center bg-[#f8f9fc] py-12 px-4 sm:px-6 lg:px-8 relative overflow-x-hidden">
       {/* Decorative blobs */}
       <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[80px] opacity-40 bg-[#b5cdff]"></div>
       <div className="fixed bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full blur-[60px] opacity-30 bg-[#ffb5d4]"></div>

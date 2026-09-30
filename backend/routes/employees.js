@@ -90,8 +90,9 @@ router.put('/:id/onboarding', async (req, res) => {
 
 // Create employee
 router.post('/', async (req, res) => {
-  const { first_name, last_name, email, phone_number, position, department, status, basic_salary, accommodation, transportation, department_id, team_id, manager_id } = req.body;
+  const { first_name, last_name, email, phone_number, position, department, status, basic_salary, salary, accommodation, transportation, department_id, team_id, manager_id } = req.body;
   const hire_date = new Date().toISOString().split('T')[0];
+  const finalSalary = basic_salary !== undefined ? basic_salary : (salary || 0);
   
   if (!first_name || !last_name || !email || !position) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -124,9 +125,9 @@ router.post('/', async (req, res) => {
 
     const db = await getDbConnection();
     const result = await db.run(
-      `INSERT INTO employees (first_name, last_name, email, phone_number, position, department, status, basic_salary, accommodation, transportation, hire_date, firebase_uid, requires_password_reset, department_id, team_id, manager_id) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [first_name, last_name, email, phone_number || '', position, department || '', status || 'Active', basic_salary || 0, accommodation || 0, transportation || 0, hire_date, firebaseUid, 1, department_id || null, team_id || null, manager_id || null]
+      `INSERT INTO employees (first_name, last_name, email, phone_number, position, department, status, salary, basic_salary, accommodation, transportation, hire_date, firebase_uid, requires_password_reset, department_id, team_id, manager_id) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [first_name, last_name, email, phone_number || '', position, department || '', status || 'Active', finalSalary, finalSalary, accommodation || 0, transportation || 0, hire_date, firebaseUid, 1, department_id || null, team_id || null, manager_id || null]
     );
 
     // Send Email using Nodemailer
@@ -171,27 +172,28 @@ router.post('/', async (req, res) => {
     
     res.status(201).json({ 
       id: result.lastID,
-      first_name, last_name, email, phone_number, position, department, status, basic_salary, hire_date,
+      first_name, last_name, email, phone_number, position, department, status, basic_salary: finalSalary, hire_date,
       firebase_uid: firebaseUid,
       department_id, team_id, manager_id,
       tempPassword
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to create employee' });
+    res.status(500).json({ error: 'Failed to create employee: ' + error.message });
   }
 });
 
 // Update employee
 router.put('/:id', async (req, res) => {
-  const { first_name, last_name, email, phone_number, position, department, status, basic_salary, accommodation, transportation, department_id, team_id, manager_id } = req.body;
+  const { first_name, last_name, email, phone_number, position, department, status, basic_salary, salary, accommodation, transportation, department_id, team_id, manager_id } = req.body;
+  const finalSalary = basic_salary !== undefined ? basic_salary : (salary || 0);
   try {
     const db = await getDbConnection();
     await db.run(
       `UPDATE employees SET 
-        first_name = ?, last_name = ?, email = ?, phone_number = ?, position = ?, department = ?, status = ?, basic_salary = ?, accommodation = ?, transportation = ?, department_id = ?, team_id = ?, manager_id = ?
+        first_name = ?, last_name = ?, email = ?, phone_number = ?, position = ?, department = ?, status = ?, salary = ?, basic_salary = ?, accommodation = ?, transportation = ?, department_id = ?, team_id = ?, manager_id = ?
        WHERE id = ?`,
-      [first_name, last_name, email, phone_number || '', position, department || '', status || 'Active', basic_salary || 0, accommodation || 0, transportation || 0, department_id || null, team_id || null, manager_id || null, req.params.id]
+      [first_name, last_name, email, phone_number || '', position, department || '', status || 'Active', finalSalary, finalSalary, accommodation || 0, transportation || 0, department_id || null, team_id || null, manager_id || null, req.params.id]
     );
     
     res.json({ message: 'Employee updated successfully' });
