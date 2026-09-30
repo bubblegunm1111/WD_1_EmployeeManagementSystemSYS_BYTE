@@ -106,16 +106,16 @@ function EmployeeOnboarding() {
                 <h3 className="text-sm font-extrabold text-gray-500 uppercase tracking-widest mb-4">Personal Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-bold text-gray-500 mb-1">Full Name</label>
+                    <label className="block text-xs font-bold text-gray-500 mb-1">Full Name <span className="text-red-500 ml-1">*</span></label>
                     <input type="text" disabled value={`${employeeData.first_name} ${employeeData.last_name}`} className="w-full px-4 py-3 bg-gray-100 border border-transparent rounded-xl text-gray-500 font-semibold cursor-not-allowed" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 mb-1">Date of Birth</label>
-                    <input type="date" name="dob" required value={formData.dob} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
+                    <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 mb-1">Gender</label>
-                    <select name="gender" required value={formData.gender} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold">
+                    <select name="gender" value={formData.gender} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold">
                       <option value="">Select gender</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
@@ -124,11 +124,11 @@ function EmployeeOnboarding() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 mb-1">Phone Number</label>
+                    <label className="block text-xs font-bold text-gray-500 mb-1">Phone Number <span className="text-red-500 ml-1">*</span></label>
                     <input type="tel" name="phone" required value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 mb-1">Personal Email</label>
+                    <label className="block text-xs font-bold text-gray-500 mb-1">Personal Email <span className="text-red-500 ml-1">*</span></label>
                     <input type="email" name="personalEmail" required value={formData.personalEmail} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                 </div>
@@ -140,15 +140,15 @@ function EmployeeOnboarding() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-xs font-bold text-gray-500 mb-1">Address</label>
-                    <input type="text" name="address" required value={formData.address} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
+                    <input type="text" name="address" value={formData.address} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 mb-1">City</label>
-                    <input type="text" name="city" required value={formData.city} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
+                    <input type="text" name="city" value={formData.city} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 mb-1">Country</label>
-                    <input type="text" name="country" required value={formData.country} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
+                    <input type="text" name="country" value={formData.country} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                 </div>
               </div>
@@ -159,15 +159,15 @@ function EmployeeOnboarding() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-xs font-bold text-gray-500 mb-1">Name</label>
-                    <input type="text" name="emergencyName" required value={formData.emergencyName} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
+                    <input type="text" name="emergencyName" value={formData.emergencyName} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 mb-1">Relationship</label>
-                    <input type="text" name="emergencyRelation" required value={formData.emergencyRelation} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
+                    <input type="text" name="emergencyRelation" value={formData.emergencyRelation} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 mb-1">Phone Number</label>
-                    <input type="tel" name="emergencyPhone" required value={formData.emergencyPhone} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
+                    <input type="tel" name="emergencyPhone" value={formData.emergencyPhone} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                 </div>
               </div>
@@ -178,11 +178,11 @@ function EmployeeOnboarding() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-500 mb-1">Bank Name</label>
-                    <input type="text" name="bankName" required value={formData.bankName} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
+                    <input type="text" name="bankName" value={formData.bankName} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 mb-1">Account Number / IBAN</label>
-                    <input type="text" name="bankAccount" required value={formData.bankAccount} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
+                    <input type="text" name="bankAccount" value={formData.bankAccount} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8b8cf8] focus:outline-none font-semibold" />
                   </div>
                 </div>
               </div>
