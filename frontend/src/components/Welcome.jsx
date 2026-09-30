@@ -114,19 +114,19 @@ function Welcome() {
               </button>
             </div>
 
-            {/* Stats */}
+            {/* Highlights */}
             <div className="flex flex-wrap gap-12 md:gap-16 pt-8 border-t border-gray-100 w-full">
               <div>
-                <h4 className="text-2xl font-black text-[#111827]">100+</h4>
-                <p className="text-sm font-medium text-gray-400 mt-1">Happy Companies</p>
+                <h4 className="text-xl font-black text-[#111827]">Lightning Fast</h4>
+                <p className="text-sm font-medium text-gray-400 mt-1">Real-time updates</p>
               </div>
               <div>
-                <h4 className="text-2xl font-black text-[#111827]">50K+</h4>
-                <p className="text-sm font-medium text-gray-400 mt-1">Employees Managed</p>
+                <h4 className="text-xl font-black text-[#111827]">Bank-Grade</h4>
+                <p className="text-sm font-medium text-gray-400 mt-1">Security & Privacy</p>
               </div>
               <div>
-                <h4 className="text-2xl font-black text-[#111827]">99.9%</h4>
-                <p className="text-sm font-medium text-gray-400 mt-1">Uptime</p>
+                <h4 className="text-xl font-black text-[#111827]">24/7</h4>
+                <p className="text-sm font-medium text-gray-400 mt-1">Expert Support</p>
               </div>
             </div>
           </div>
