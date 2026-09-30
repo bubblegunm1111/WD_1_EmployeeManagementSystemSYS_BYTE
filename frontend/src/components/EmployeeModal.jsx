@@ -7,6 +7,7 @@ function EmployeeModal({ isOpen, onClose, onSuccess, initialData }) {
   const [step, setStep] = useState(1);
   const [isSuccess, setIsSuccess] = useState(false);
   const [tempPassword, setTempPassword] = useState('');
+  const [formError, setFormError] = useState('');
   const [formData, setFormData] = useState({
     firstName: '', lastName: '', email: '', position: '', department: '', status: 'Active', salary: '', role: 'employee'
   });
