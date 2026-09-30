@@ -197,7 +197,7 @@ function Login() {
   const isAdmin = uiRole === 'admin';
 
   return (
-    <div className="h-full w-full flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-[#eef0ff] via-[#f8f9ff] to-[#f0e6ff]">
+    <div className="h-full w-full flex items-start justify-center relative overflow-y-auto overflow-x-hidden bg-gradient-to-br from-[#eef0ff] via-[#f8f9ff] to-[#f0e6ff] no-scrollbar py-10">
       
       {/* Decorative blobs */}
       <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[100px] opacity-50 bg-[#c7caff]"></div>
