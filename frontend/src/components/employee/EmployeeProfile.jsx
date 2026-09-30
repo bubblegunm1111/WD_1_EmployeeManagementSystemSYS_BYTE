@@ -80,10 +80,24 @@ export default function EmployeeProfile() {
     }
   };
 
-  if (loading || !employeeData) {
+  if (loading) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-[#fdfcfa]">
         <Loader className="animate-spin text-indigo-500" size={32} />
+      </div>
+    );
+  }
+
+  if (!employeeData) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center bg-[#fdfcfa] p-8 text-center">
+        <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4">
+          <UserIcon size={32} />
+        </div>
+        <h2 className="text-2xl font-black text-[#111827] mb-2">Profile Not Found</h2>
+        <p className="text-gray-500 max-w-md">
+          We could not find an employee record associated with your email address ({user?.email}). Please contact your HR administrator to ensure you have been added to the system.
+        </p>
       </div>
     );
   }
