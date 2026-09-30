@@ -236,6 +236,33 @@ async function initDb() {
   try { await db.exec('ALTER TABLE saved_reports ADD COLUMN organization_id INTEGER REFERENCES organizations(id);'); } catch (e) { }
   try { await db.exec('ALTER TABLE report_history ADD COLUMN organization_id INTEGER REFERENCES organizations(id);'); } catch (e) { }
 
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS tasks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      employee_id INTEGER,
+      title TEXT NOT NULL,
+      description TEXT,
+      due TEXT,
+      priority TEXT DEFAULT 'Medium',
+      status TEXT DEFAULT 'To Do',
+      assigned_by TEXT,
+      project TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (employee_id) REFERENCES employees(id)
+    )
+  `);
+
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS task_comments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      task_id INTEGER,
+      author TEXT NOT NULL,
+      text TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+    )
+  `);
+
   return db;
 }
 

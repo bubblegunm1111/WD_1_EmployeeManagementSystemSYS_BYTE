@@ -9,6 +9,7 @@ const leaveRouter = require('./routes/leave');
 const departmentsRouter = require('./routes/departments');
 const teamsRouter = require('./routes/teams');
 const reportsRouter = require('./routes/reports');
+const tasksRouter = require('./routes/tasks');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ app.use('/api/departments', departmentsRouter);
 app.use('/api/teams', teamsRouter);
 app.use('/api/payroll', require('./routes/payroll'));
 app.use('/api/reports', reportsRouter);
+app.use('/api/tasks', tasksRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Employee Management API is running' });
