@@ -37,6 +37,15 @@ router.post('/', async (req, res) => {
     const newTask = await db.get('SELECT * FROM tasks WHERE id = ?', [result.lastID]);
     newTask.comments = [];
     newTask.attachments = [];
+
+    // Create Notification
+    const recipient = assigned_by === 'Admin' ? employee_id.toString() : 'admin';
+    const notifTitle = assigned_by === 'Admin' ? 'New Task Assigned' : 'New Task Created';
+    const notifMessage = `${assigned_by} assigned a new task: "${title}"`;
+    await db.run(
+      'INSERT INTO notifications (recipient_id, title, message, type) VALUES (?, ?, ?, ?)',
+      [recipient, notifTitle, notifMessage, 'task_assigned']
+    );
     
     res.status(201).json(newTask);
   } catch (error) {
@@ -88,6 +97,18 @@ router.post('/:id/comments', async (req, res) => {
     );
     
     const newComment = await db.get('SELECT * FROM task_comments WHERE id = ?', [result.lastID]);
+
+    // Create Notification
+    const task = await db.get('SELECT employee_id, title FROM tasks WHERE id = ?', [req.params.id]);
+    if (task) {
+      const recipient = author === 'Admin' ? task.employee_id.toString() : 'admin';
+      const notifMessage = `${author} commented on task "${task.title}": ${text.substring(0, 30)}...`;
+      await db.run(
+        'INSERT INTO notifications (recipient_id, title, message, type) VALUES (?, ?, ?, ?)',
+        [recipient, 'New Task Comment', notifMessage, 'task_comment']
+      );
+    }
+    
     res.status(201).json(newComment);
   } catch (error) {
     console.error('Error adding comment:', error);

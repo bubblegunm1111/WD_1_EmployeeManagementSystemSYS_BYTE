@@ -34,32 +34,19 @@ function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen,
           if (role === 'employee' && user?.email) {
             const empRes = await api.get(`/employees/by-email?email=${user.email}`);
             const empData = empRes.data;
-            const leaveRes = await api.get('/leave');
-            const leaves = leaveRes.data;
-            
-            const resolved = leaves
-              .filter(l => l.employee_id === empData.id && l.status !== 'Pending')
-              .sort((a, b) => b.id - a.id)
-              .slice(0, 5);
-              
-            setNotifications(resolved);
+            const notifRes = await api.get(`/notifications/${empData.id}`);
+            setNotifications(notifRes.data);
           } else if (role === 'admin') {
-            const leaveRes = await api.get('/leave');
-            const leaves = leaveRes.data;
-            
-            const pending = leaves
-              .filter(l => l.status === 'Pending')
-              .sort((a, b) => b.id - a.id)
-              .slice(0, 5);
-              
-            setNotifications(pending);
+            const notifRes = await api.get('/notifications/admin');
+            setNotifications(notifRes.data);
           }
         } catch (err) {
           console.error(err);
         }
       };
+
       fetchNotifs();
-      const interval = setInterval(fetchNotifs, 5000);
+      const interval = setInterval(fetchNotifs, 10000);
       return () => clearInterval(interval);
     }
   }, [role, user]);
@@ -154,7 +141,7 @@ function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen,
             className="relative text-gray-400 hover:text-gray-600 transition cursor-pointer p-1"
           >
             <Bell size={20} />
-            {notifications.length > 0 && (
+            {notifications.filter(n => !n.is_read).length > 0 && (
               <span className="absolute top-1 right-1 w-2 h-2 bg-[#fca5a5] rounded-full border-2 border-[#fdfcfa]"></span>
             )}
           </button>
@@ -164,7 +151,7 @@ function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen,
             <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
               <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
                 <span className="font-bold text-gray-800">Notifications</span>
-                <span className="text-xs text-[#4f46e5] font-semibold cursor-pointer">Mark all read</span>
+                <span onClick={markAllRead} className="text-xs text-[#4f46e5] font-semibold cursor-pointer">Mark all read</span>
               </div>
               
               {notifications.length === 0 ? (
@@ -173,29 +160,15 @@ function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen,
                 </div>
               ) : (
                 <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
-                  {notifications.map(n => (
-                    <div key={n.id} className="p-3 border-b border-gray-50 hover:bg-gray-50 text-sm cursor-pointer transition">
-                      {role === 'employee' ? (
-                        <>
-                          <div className="flex items-center justify-between mb-1">
-                            <p className="font-bold text-gray-800">Leave {n.status}</p>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${n.status === 'Approved' ? 'bg-[#dcfce7] text-[#16a34a]' : 'bg-[#fee2e2] text-[#ef4444]'}`}>
-                              {n.status}
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-500">Your request for {n.duration_days} days off ({n.leave_type}) was {n.status.toLowerCase()}.</p>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex items-center justify-between mb-1">
-                            <p className="font-bold text-gray-800">New Leave Request</p>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#fef08a] text-[#ca8a04]">
-                              Pending
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-500">{n.first_name} {n.last_name} requested {n.duration_days} days off ({n.leave_type}).</p>
-                        </>
-                      )}
+                  {notifications.map((n, i) => (
+                    <div key={i} className={`p-4 border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer ${!n.is_read ? 'bg-indigo-50/30' : ''}`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <p className={`font-bold ${!n.is_read ? 'text-[#4f46e5]' : 'text-gray-800'}`}>{n.title}</p>
+                        <span className="text-[10px] font-medium text-gray-400">
+                          {new Date(n.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500">{n.message}</p>
                     </div>
                   ))}
                 </div>
