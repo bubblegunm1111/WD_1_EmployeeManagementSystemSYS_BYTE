@@ -232,7 +232,7 @@ function EmployeeList({ refreshTrigger, searchQuery, departmentFilter, statusFil
             </div>
 
             {/* Info Grid */}
-            <div className="grid grid-cols-2 gap-3 mb-6 bg-[#f8f9fc] rounded-2xl p-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 bg-[#f8f9fc] rounded-2xl p-4">
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase font-extrabold text-gray-400 tracking-wider">Salary</span>
                 <span className="text-sm font-bold text-[#1e293b]">${emp.salary.toLocaleString()}</span>

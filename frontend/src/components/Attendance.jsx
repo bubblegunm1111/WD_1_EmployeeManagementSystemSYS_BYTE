@@ -198,7 +198,7 @@ function Attendance() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-4 gap-4 mb-8 shrink-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 shrink-0">
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col transition hover:shadow-md">
             <div className="flex items-center gap-3 mb-3 text-gray-500">
               <CheckCircle size={16} className="text-[#16a34a]" />

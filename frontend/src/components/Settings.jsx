@@ -48,11 +48,11 @@ export default function Settings() {
       </div>
 
       {/* Body: Split Pane */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         
         {/* Sidebar */}
-        <div className="w-64 shrink-0 border-r border-gray-200 bg-white overflow-y-auto custom-scrollbar p-4">
-          <nav className="flex flex-col gap-1">
+        <div className="w-full md:w-64 shrink-0 border-r border-b md:border-b-0 border-gray-200 bg-white overflow-x-auto md:overflow-y-auto custom-scrollbar p-4">
+          <nav className="flex flex-row md:flex-col gap-2">
             {TABS.map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -60,7 +60,7 @@ export default function Settings() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all text-left
+                  className={`flex items-center shrink-0 whitespace-nowrap gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all text-left
                     ${isActive 
                       ? 'bg-[#4f46e5]/10 text-[#4f46e5]' 
                       : 'text-gray-600 hover:bg-gray-50 hover:text-[#111827]'
@@ -76,7 +76,7 @@ export default function Settings() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-8 bg-[#fdfcfa]">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-8 bg-[#fdfcfa]">
           <div className="max-w-4xl mx-auto pb-12">
             {activeTab === 'organization' && <OrganizationSettings />}
             {activeTab === 'attendance' && <AttendanceSettings />}
