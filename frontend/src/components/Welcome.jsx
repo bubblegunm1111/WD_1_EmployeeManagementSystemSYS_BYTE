@@ -1,10 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, ArrowRight, Play, Users, Calendar, Umbrella, DollarSign, BarChart2, ShieldCheck } from 'lucide-react';
 
 function Welcome() {
   const navigate = useNavigate();
   const [showRoleSelection, setShowRoleSelection] = useState(false);
+  const [typedText, setTypedText] = useState('');
+  
+  const line1 = "The Hub for Your \n";
+  const line2 = "Entire Workplace";
+  const fullText = line1 + line2;
+
+  useEffect(() => {
+    let index = 0;
+    const timer = setInterval(() => {
+      setTypedText(fullText.slice(0, index));
+      index++;
+      if (index > fullText.length) {
+        clearInterval(timer);
+      }
+    }, 40);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleRoleSelect = (role) => {
     navigate('/login', { state: { role } });
@@ -91,9 +108,12 @@ function Welcome() {
               <Sparkles size={16} /> Modern HR Management Platform
             </div>
             
-            <h1 className="text-6xl md:text-7xl font-black text-[#111827] tracking-tight leading-[1.1] mb-6">
-              The Hub for Your <br/>
-              <span className="text-[#6366f1]">Entire Workplace</span>
+            <h1 className="text-6xl md:text-7xl font-black text-[#111827] tracking-tight leading-[1.1] mb-6 min-h-[140px] md:min-h-[160px] whitespace-pre-line">
+              {typedText.substring(0, line1.length)}
+              <span className="text-[#6366f1]">
+                {typedText.substring(line1.length)}
+              </span>
+              <span className="animate-pulse text-[#6366f1]">|</span>
             </h1>
             
             <p className="text-lg md:text-xl text-gray-500 leading-relaxed mb-10 font-medium max-w-xl">
