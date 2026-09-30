@@ -65,6 +65,29 @@ router.put('/:id/reset-status', async (req, res) => {
   }
 });
 
+// Update onboarding data
+router.put('/:id/onboarding', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { dob, gender, personal_email, address, city, country, emergency_name, emergency_relation, emergency_phone, bank_name, bank_account } = req.body;
+    const db = await getDbConnection();
+    
+    await db.run(
+      `UPDATE employees SET 
+        onboarding_completed = 1,
+        dob = ?, gender = ?, personal_email = ?, address = ?, city = ?, country = ?, 
+        emergency_name = ?, emergency_relation = ?, emergency_phone = ?, 
+        bank_name = ?, bank_account = ?
+       WHERE id = ?`,
+      [dob, gender, personal_email, address, city, country, emergency_name, emergency_relation, emergency_phone, bank_name, bank_account, id]
+    );
+    res.json({ message: 'Onboarding completed successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to save onboarding data' });
+  }
+});
+
 // Create employee
 router.post('/', async (req, res) => {
   const { first_name, last_name, email, phone_number, position, department, status, basic_salary, accommodation, transportation, department_id, team_id, manager_id } = req.body;

@@ -7,6 +7,7 @@ import EmployeeDashboard from './components/EmployeeDashboard';
 import EmployeeAttendance from './components/EmployeeAttendance';
 import EmployeeLeave from './components/EmployeeLeave';
 import ForcePasswordReset from './components/ForcePasswordReset';
+import EmployeeOnboarding from './components/employee/EmployeeOnboarding';
 import Login from './components/Login';
 import Welcome from './components/Welcome';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -49,6 +50,11 @@ function AppRoutes() {
       <Route path="/force-reset" element={
         <ProtectedRoute allowedRoles={['employee', 'admin']}>
           <ForcePasswordReset />
+        </ProtectedRoute>
+      } />
+      <Route path="/onboarding" element={
+        <ProtectedRoute allowedRoles={['employee']}>
+          <EmployeeOnboarding />
         </ProtectedRoute>
       } />
 

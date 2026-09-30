@@ -159,6 +159,20 @@ async function initDb() {
   try { await db.exec('ALTER TABLE employees ADD COLUMN accommodation INTEGER DEFAULT 0;'); } catch (e) { }
   try { await db.exec('ALTER TABLE employees ADD COLUMN transportation INTEGER DEFAULT 0;'); } catch (e) { }
 
+  // Add onboarding fields
+  try { await db.exec('ALTER TABLE employees ADD COLUMN onboarding_completed BOOLEAN DEFAULT 0;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN dob TEXT;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN gender TEXT;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN personal_email TEXT;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN address TEXT;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN city TEXT;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN country TEXT;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN emergency_name TEXT;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN emergency_relation TEXT;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN emergency_phone TEXT;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN bank_name TEXT;'); } catch (e) { }
+  try { await db.exec('ALTER TABLE employees ADD COLUMN bank_account TEXT;'); } catch (e) { }
+
   // Create Report History and Saved Reports
   await db.exec(`
     CREATE TABLE IF NOT EXISTS saved_reports (
