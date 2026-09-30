@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Clock, Calendar, CheckCircle, FileText, AlertCircle, ArrowRight } from 'lucide-react';
+import api from '../api';
 
 function EmployeeDashboard() {
   const { user } = useAuth();
@@ -23,9 +24,8 @@ function EmployeeDashboard() {
   // Fetch real employee ID from DB using Auth email
   useEffect(() => {
     if (user?.email) {
-      fetch(`http://localhost:3000/api/employees/by-email?email=${user.email}`)
-        .then(res => res.json())
-        .then(data => setEmployeeId(data.id))
+      api.get(`/employees/by-email?email=${encodeURIComponent(user.email)}`)
+        .then(res => setEmployeeId(res.data.id))
         .catch(console.error);
     }
   }, [user]);
@@ -35,9 +35,9 @@ function EmployeeDashboard() {
     if (employeeId) {
       const now = new Date();
       const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-      fetch(`http://localhost:3000/api/attendance/${employeeId}`)
-        .then(res => res.json())
-        .then(data => {
+      api.get(`/attendance/${employeeId}`)
+        .then(res => {
+          const data = res.data;
           const todaysRecord = data.find(r => r.date === today);
           if (todaysRecord && !todaysRecord.clock_out) {
             setClockedIn(true);
@@ -75,26 +75,18 @@ function EmployeeDashboard() {
 
     try {
       if (!clockedIn) {
-        await fetch('http://localhost:3000/api/attendance', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            employee_id: employeeId,
-            clock_in: timeStr,
-            date: dateStr
-          })
+        await api.post('/attendance', {
+          employee_id: employeeId,
+          clock_in: timeStr,
+          date: dateStr
         });
         setClockInTime(timeStr);
         setClockedIn(true);
       } else {
-        await fetch('http://localhost:3000/api/attendance', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            employee_id: employeeId,
-            clock_out: timeStr,
-            date: dateStr
-          })
+        await api.post('/attendance', {
+          employee_id: employeeId,
+          clock_out: timeStr,
+          date: dateStr
         });
       }
       syncAttendance();
@@ -111,14 +103,10 @@ function EmployeeDashboard() {
     const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
     try {
-      await fetch('http://localhost:3000/api/attendance/break', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          employee_id: employeeId,
-          time: timeStr,
-          date: dateStr
-        })
+      await api.post('/attendance/break', {
+        employee_id: employeeId,
+        time: timeStr,
+        date: dateStr
       });
       syncAttendance();
     } catch (err) {
