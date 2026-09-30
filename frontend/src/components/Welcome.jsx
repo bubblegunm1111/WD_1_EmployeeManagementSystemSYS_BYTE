@@ -69,7 +69,7 @@ function Welcome() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-6 z-10 relative mt-16 md:mt-24">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-6 z-10 relative mt-8 md:mt-12">
         
         {/* Role Selection Overlay (Hidden by default) */}
         {showRoleSelection && (
@@ -105,7 +105,7 @@ function Welcome() {
         )}
 
         {/* Hero Section */}
-        <div className={`flex flex-col lg:flex-row items-center gap-12 lg:gap-8 transition-opacity duration-500 ${showRoleSelection ? 'opacity-0' : 'opacity-100'}`}>
+        <div className={`flex flex-col lg:flex-row items-stretch gap-8 transition-opacity duration-500 ${showRoleSelection ? 'opacity-0' : 'opacity-100'}`}>
           
           {/* Left: Text & CTA */}
           <div className="flex-1 flex flex-col items-start text-left max-w-2xl">
@@ -159,12 +159,12 @@ function Welcome() {
           </div>
 
           {/* Right: Mockup Graphic */}
-          <div className="flex-1 w-full flex justify-center lg:justify-end relative">
-            <div className="relative w-full max-w-[800px] xl:max-w-[900px] lg:scale-110 lg:translate-x-12 xl:translate-x-20">
+          <div className="flex-1 w-full flex justify-center lg:justify-end relative self-stretch">
+            <div className="relative w-full max-w-[800px] xl:max-w-[900px] lg:translate-x-12 xl:translate-x-20 flex items-stretch">
               <img 
                 src="/hero-mockup.png" 
                 alt="SYS Dashboard Mockup" 
-                className="w-full h-auto object-contain drop-shadow-2xl rounded-2xl"
+                className="w-full h-full object-cover object-left-top drop-shadow-2xl rounded-2xl"
               />
             </div>
           </div>
