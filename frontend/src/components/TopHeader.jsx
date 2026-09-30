@@ -143,10 +143,12 @@ function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen,
         </div>
 
         <button 
-          onClick={() => toast.success("App Switcher Opened")}
-          className="text-gray-400 hover:text-gray-600 transition cursor-pointer p-1"
+          onClick={() => toast.success("Powered by SYS")}
+          className="flex items-center gap-2 text-gray-400 hover:text-[#4f46e5] transition cursor-pointer p-1 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 hover:border-[#c7d2fe]"
+          title="SYS Signature"
         >
-          <Grid size={20} />
+          <Grid size={16} />
+          <span className="text-xs font-black tracking-widest uppercase">SYS</span>
         </button>
 
         <div className="relative">
