@@ -51,9 +51,9 @@ function EmployeeLeave() {
   useEffect(() => {
     let interval;
     if (user?.email) {
-      fetch(`http://localhost:3000/api/employees/by-email?email=${user.email}`)
-        .then(res => res.json())
-        .then(data => {
+      api.get(`/employees/by-email?email=${encodeURIComponent(user.email)}`)
+        .then(res => {
+          const data = res.data;
           setEmployeeId(data.id);
           fetchMyLeaves(data.id);
           // Poll every 5 seconds for live status updates from admin
