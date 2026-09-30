@@ -8,6 +8,9 @@ import api from '../api';
 function Attendance() {
   const [employees, setEmployees] = useState([]);
   const [attendance, setAttendance] = useState([]);
+  const [selectedDept, setSelectedDept] = useState('All');
+  const [departments, setDepartments] = useState([]);
+  const [attendanceData, setAttendanceData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Filters
@@ -27,6 +30,9 @@ function Attendance() {
 
   useEffect(() => {
     fetchData();
+    api.get('/departments')
+      .then(res => setDepartments(res.data))
+      .catch(console.error);
   }, []);
 
   const fetchData = async () => {
@@ -38,6 +44,7 @@ function Attendance() {
       ]);
       setEmployees(empRes.data);
       setAttendance(attRes.data);
+      setAttendanceData(attRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -162,7 +169,7 @@ function Attendance() {
 
   // Apply Filters
   const filteredData = tableData.filter(row => {
-    const matchDept = deptFilter === 'All' || row.department === deptFilter;
+    const matchDept = selectedDept === 'All' || row.department === selectedDept;
     const matchStatus = statusFilter === 'All' || row.label === statusFilter || 
       (statusFilter === 'Present' && (row.label === 'Present' || row.label === 'Working' || row.label === 'Late' || row.label === 'On Break'));
     
@@ -256,18 +263,14 @@ function Attendance() {
             {/* Department */}
             <div className="relative">
               <select 
-                value={deptFilter}
-                onChange={(e) => setDeptFilter(e.target.value)}
+                value={selectedDept}
+                onChange={(e) => setSelectedDept(e.target.value)}
                 className="w-44 bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-[#1e293b] appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] pt-6 pb-2"
               >
                 <option value="All">All Departments</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Design">Design</option>
-                <option value="Marketing">Marketing</option>
-                <option value="IT">IT</option>
-                <option value="HR">HR</option>
-                <option value="Finance">Finance</option>
-                <option value="Sales">Sales</option>
+                {departments.map(dept => (
+                  <option key={dept.id} value={dept.name}>{dept.name}</option>
+                ))}
               </select>
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                 <ChevronDown size={16} className="text-gray-400" />

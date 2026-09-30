@@ -12,11 +12,16 @@ function Leave() {
   const [deptFilter, setDeptFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState(null); // New state for calendar filtering
+  const [loading, setLoading] = useState(true);
+  const [departments, setDepartments] = useState([]);
   const [leaveData, setLeaveData] = useState([]);
   const [stats, setStats] = useState({ total: 0, approved: 0, pending: 0, rejected: 0 });
 
   useEffect(() => {
     fetchLeaves();
+    api.get('/departments')
+      .then(res => setDepartments(res.data))
+      .catch(console.error);
     const interval = setInterval(fetchLeaves, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -287,10 +292,9 @@ function Leave() {
                 className="w-48 bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-[#1e293b] appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] pt-6 pb-2"
               >
                 <option value="All">All Departments</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Design">Design</option>
-                <option value="Marketing">Marketing</option>
-                <option value="HR">HR</option>
+                {departments.map(dept => (
+                  <option key={dept.id} value={dept.name}>{dept.name}</option>
+                ))}
               </select>
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                 <ChevronDown size={16} className="text-gray-400" />

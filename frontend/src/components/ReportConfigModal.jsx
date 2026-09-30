@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Calendar } from 'lucide-react';
+import api from '../api';
 
 function ReportConfigModal({ isOpen, onClose, reportType, onGenerate }) {
   const [period, setPeriod] = useState('September 2026');
@@ -67,9 +68,9 @@ function ReportConfigModal({ isOpen, onClose, reportType, onGenerate }) {
               className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#4f46e5] focus:border-transparent transition-all"
             >
               <option value="all">All Departments</option>
-              <option value="1">Engineering</option>
-              <option value="2">Design</option>
-              <option value="3">Marketing</option>
+              {departments.map(dept => (
+                <option key={dept.id} value={dept.id}>{dept.name}</option>
+              ))}
             </select>
           </div>
 

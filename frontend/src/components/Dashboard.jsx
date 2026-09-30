@@ -21,10 +21,17 @@ function Dashboard() {
   
   const [stats, setStats] = useState({ total: 0, active: 0, onLeave: 0, inactive: 0 });
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
     const handleCreate = () => setIsCreateModalOpen(true);
     EventBus.on('create-employee', handleCreate);
+    
+    // Fetch departments
+    api.get('/departments')
+      .then(res => setDepartments(res.data))
+      .catch(console.error);
+      
     return () => EventBus.off('create-employee', handleCreate);
   }, []);
 
@@ -108,10 +115,9 @@ function Dashboard() {
               className="bg-gray-50 border border-gray-200 rounded-full px-4 py-2.5 text-sm font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] appearance-none cursor-pointer"
             >
               <option value="">All Departments</option>
-              <option value="Engineering">Engineering</option>
-              <option value="Design">Design</option>
-              <option value="Marketing">Marketing</option>
-              <option value="HR">HR</option>
+              {departments.map(dept => (
+                <option key={dept.id} value={dept.name}>{dept.name}</option>
+              ))}
             </select>
             
             <select 
