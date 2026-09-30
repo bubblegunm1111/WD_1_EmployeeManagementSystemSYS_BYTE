@@ -6,8 +6,9 @@ function Welcome() {
   const navigate = useNavigate();
   const [showRoleSelection, setShowRoleSelection] = useState(false);
   const [typedText, setTypedText] = useState('');
+  const [visibleFeatures, setVisibleFeatures] = useState([]);
   
-  const line1 = "The Hub for Your \n";
+  const line1 = "The Hub for Your";
   const line2 = "Entire Workplace";
   const fullText = line1 + line2;
 
@@ -20,7 +21,25 @@ function Welcome() {
         clearInterval(timer);
       }
     }, 40);
-    return () => clearInterval(timer);
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setVisibleFeatures(prev => {
+            if (!prev.includes(entry.target.id)) return [...prev, entry.target.id];
+            return prev;
+          });
+        }
+      });
+    }, { threshold: 0.1 });
+
+    const elements = document.querySelectorAll('.feature-card');
+    elements.forEach(el => observer.observe(el));
+
+    return () => {
+      clearInterval(timer);
+      elements.forEach(el => observer.unobserve(el));
+    };
   }, []);
 
   const handleRoleSelect = (role) => {
@@ -108,11 +127,18 @@ function Welcome() {
               <Sparkles size={16} /> Modern HR Management Platform
             </div>
             
-            <h1 className="text-6xl md:text-7xl font-black text-[#111827] tracking-tight leading-[1.1] mb-6 min-h-[140px] md:min-h-[160px] whitespace-pre-line">
-              {typedText.substring(0, line1.length)}
-              <span className="text-[#6366f1]">
-                {typedText.substring(line1.length)}
-              </span>
+            <h1 className="text-6xl md:text-[68px] font-black text-[#111827] tracking-tight leading-[1.1] mb-6 min-h-[140px] md:min-h-[160px]">
+              {typedText.length <= line1.length ? (
+                typedText
+              ) : (
+                <>
+                  {line1}
+                  <br />
+                  <span className="text-[#6366f1] whitespace-nowrap">
+                    {typedText.substring(line1.length)}
+                  </span>
+                </>
+              )}
               <span className="animate-pulse text-[#6366f1]">|</span>
             </h1>
             
@@ -170,7 +196,7 @@ function Welcome() {
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-x-8 gap-y-12">
           
           {/* Feature 1 */}
-          <div className="flex flex-col items-start col-span-1">
+          <div id="feature-0" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 transform ${visibleFeatures.includes('feature-0') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
               <Users size={24} />
             </div>
@@ -181,7 +207,7 @@ function Welcome() {
           </div>
 
           {/* Feature 2 */}
-          <div className="flex flex-col items-start col-span-1">
+          <div id="feature-1" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 delay-100 transform ${visibleFeatures.includes('feature-1') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
               <Calendar size={24} />
             </div>
@@ -192,7 +218,7 @@ function Welcome() {
           </div>
 
           {/* Feature 3 */}
-          <div className="flex flex-col items-start col-span-1">
+          <div id="feature-2" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 delay-200 transform ${visibleFeatures.includes('feature-2') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
               <Umbrella size={24} />
             </div>
@@ -203,7 +229,7 @@ function Welcome() {
           </div>
 
           {/* Feature 4 */}
-          <div className="flex flex-col items-start col-span-1">
+          <div id="feature-3" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 delay-300 transform ${visibleFeatures.includes('feature-3') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
               <DollarSign size={24} />
             </div>
@@ -214,7 +240,7 @@ function Welcome() {
           </div>
 
           {/* Feature 5 */}
-          <div className="flex flex-col items-start col-span-1">
+          <div id="feature-4" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 delay-500 transform ${visibleFeatures.includes('feature-4') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
               <BarChart2 size={24} />
             </div>
@@ -225,7 +251,7 @@ function Welcome() {
           </div>
 
           {/* Feature 6 */}
-          <div className="flex flex-col items-start col-span-1">
+          <div id="feature-5" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 delay-700 transform ${visibleFeatures.includes('feature-5') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
               <ShieldCheck size={24} />
             </div>
