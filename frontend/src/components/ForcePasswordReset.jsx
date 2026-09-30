@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { updatePassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import api from '../api';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import { Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 
 function ForcePasswordReset() {
   const [newPassword, setNewPassword] = useState('');
@@ -100,9 +99,9 @@ function ForcePasswordReset() {
               className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
             >
               {showPassword ? (
-                <EyeSlashIcon className="h-5 w-5" />
+                <EyeOff className="h-5 w-5" />
               ) : (
-                <EyeIcon className="h-5 w-5" />
+                <Eye className="h-5 w-5" />
               )}
             </button>
           </div>
@@ -122,15 +121,15 @@ function ForcePasswordReset() {
             <h4 className="text-xs font-extrabold text-gray-400 uppercase tracking-widest mb-3">Password requirements:</h4>
             <ul className="space-y-2 text-sm font-semibold">
               <li className={`flex items-center gap-2 ${reqs.length ? 'text-[#34A853]' : 'text-gray-400'}`}>
-                {reqs.length ? <CheckCircleIcon className="w-5 h-5" /> : <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>}
+                {reqs.length ? <CheckCircle2 className="w-5 h-5" /> : <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>}
                 At least 8 characters
               </li>
               <li className={`flex items-center gap-2 ${reqs.uppercase ? 'text-[#34A853]' : 'text-gray-400'}`}>
-                {reqs.uppercase ? <CheckCircleIcon className="w-5 h-5" /> : <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>}
+                {reqs.uppercase ? <CheckCircle2 className="w-5 h-5" /> : <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>}
                 One uppercase letter
               </li>
               <li className={`flex items-center gap-2 ${reqs.number ? 'text-[#34A853]' : 'text-gray-400'}`}>
-                {reqs.number ? <CheckCircleIcon className="w-5 h-5" /> : <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>}
+                {reqs.number ? <CheckCircle2 className="w-5 h-5" /> : <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>}
                 One number
               </li>
             </ul>

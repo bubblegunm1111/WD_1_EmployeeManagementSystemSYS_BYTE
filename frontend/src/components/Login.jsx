@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { Eye, EyeOff } from 'lucide-react';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -151,9 +151,9 @@ function Login() {
               className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
             >
               {showPassword ? (
-                <EyeSlashIcon className="h-5 w-5" />
+                <EyeOff className="h-5 w-5" />
               ) : (
-                <EyeIcon className="h-5 w-5" />
+                <Eye className="h-5 w-5" />
               )}
             </button>
           </div>
