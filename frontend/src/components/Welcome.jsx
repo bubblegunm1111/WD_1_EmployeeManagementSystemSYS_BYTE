@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, ArrowRight, Play, Users, Calendar, Umbrella, DollarSign, BarChart2, ShieldCheck } from 'lucide-react';
 
@@ -22,23 +22,8 @@ function Welcome() {
       }
     }, 40);
     
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setVisibleFeatures(prev => {
-            if (!prev.includes(entry.target.id)) return [...prev, entry.target.id];
-            return prev;
-          });
-        }
-      });
-    }, { threshold: 0.1 });
-
-    const elements = document.querySelectorAll('.feature-card');
-    elements.forEach(el => observer.observe(el));
-
     return () => {
       clearInterval(timer);
-      elements.forEach(el => observer.unobserve(el));
     };
   }, []);
 
@@ -192,80 +177,117 @@ function Welcome() {
       </main>
 
       {/* Features Grid */}
-      <section className="w-full bg-white mt-32 py-24 border-t border-gray-100 relative z-20">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-x-8 gap-y-12">
-          
-          {/* Feature 1 */}
-          <div id="feature-0" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 transform ${visibleFeatures.includes('feature-0') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
-              <Users size={24} />
-            </div>
-            <h4 className="font-bold text-[#111827] mb-2 text-base">Employee Management</h4>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed">
-              Keep your team organized with centralized employee records and easy management tools.
-            </p>
-          </div>
-
-          {/* Feature 2 */}
-          <div id="feature-1" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 delay-100 transform ${visibleFeatures.includes('feature-1') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
-              <Calendar size={24} />
-            </div>
-            <h4 className="font-bold text-[#111827] mb-2 text-base">Attendance Tracking</h4>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed">
-              Monitor working hours, absences and overtime with real-time insights.
-            </p>
-          </div>
-
-          {/* Feature 3 */}
-          <div id="feature-2" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 delay-200 transform ${visibleFeatures.includes('feature-2') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
-              <Umbrella size={24} />
-            </div>
-            <h4 className="font-bold text-[#111827] mb-2 text-base">Leave Management</h4>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed">
-              Handle leave requests, approvals and balances effortlessly.
-            </p>
-          </div>
-
-          {/* Feature 4 */}
-          <div id="feature-3" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 delay-300 transform ${visibleFeatures.includes('feature-3') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
-              <DollarSign size={24} />
-            </div>
-            <h4 className="font-bold text-[#111827] mb-2 text-base">Payroll Processing</h4>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed">
-              Automate calculations and manage salaries, bonuses and deductions.
-            </p>
-          </div>
-
-          {/* Feature 5 */}
-          <div id="feature-4" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 delay-500 transform ${visibleFeatures.includes('feature-4') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
-              <BarChart2 size={24} />
-            </div>
-            <h4 className="font-bold text-[#111827] mb-2 text-base">Powerful Reports</h4>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed">
-              Get the data you need with customizable and exportable reports.
-            </p>
-          </div>
-
-          {/* Feature 6 */}
-          <div id="feature-5" className={`feature-card flex flex-col items-start col-span-1 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-700 delay-700 transform ${visibleFeatures.includes('feature-5') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
-              <ShieldCheck size={24} />
-            </div>
-            <h4 className="font-bold text-[#111827] mb-2 text-base">Secure & Reliable</h4>
-            <p className="text-sm text-gray-500 font-medium leading-relaxed">
-              Your data is protected with enterprise-grade security and privacy.
-            </p>
-          </div>
-
-        </div>
-      </section>
+      <FeaturesCarousel />
 
     </div>
   );
 }
+
+const FeaturesCarousel = () => {
+  const scrollRef = useRef(null);
+  const [scrollX, setScrollX] = useState(0);
+  const [viewportW, setViewportW] = useState(0);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setViewportW(window.innerWidth);
+      const handleResize = () => setViewportW(window.innerWidth);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
+
+  const handleScroll = (e) => {
+    setScrollX(e.target.scrollLeft);
+  };
+
+  const features = [
+    { title: "Employee Management", icon: <Users size={24} />, desc: "Keep your team organized with centralized employee records and easy management tools." },
+    { title: "Attendance Tracking", icon: <Calendar size={24} />, desc: "Monitor working hours, absences and overtime with real-time insights." },
+    { title: "Leave Management", icon: <Umbrella size={24} />, desc: "Handle leave requests, approvals and balances effortlessly." },
+    { title: "Payroll Processing", icon: <DollarSign size={24} />, desc: "Automate calculations and manage salaries, bonuses and deductions." },
+    { title: "Powerful Reports", icon: <BarChart2 size={24} />, desc: "Get the data you need with customizable and exportable reports." },
+    { title: "Secure & Reliable", icon: <ShieldCheck size={24} />, desc: "Your data is protected with enterprise-grade security and privacy." },
+  ];
+
+  const CARD_WIDTH = 340;
+  const GAP = 48; // 3rem
+
+  return (
+    <section className="w-full mt-32 py-32 relative overflow-hidden bg-gradient-to-br from-[#f8f9ff] via-[#fcfcfd] to-[#f4f5ff]">
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+      
+      {/* Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[600px] bg-gradient-to-r from-[#eef0ff] via-[#e5e7ff] to-[#f4f5ff] blur-[120px] rounded-full opacity-60 pointer-events-none"></div>
+      
+      <div 
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="w-full overflow-x-auto snap-x snap-mandatory hide-scrollbar relative z-20 flex"
+        style={{ perspective: '1500px', scrollBehavior: 'smooth' }}
+      >
+        <div 
+          className="flex items-center h-[450px]"
+          style={{ 
+            paddingLeft: `calc(50vw - ${CARD_WIDTH / 2}px)`, 
+            paddingRight: `calc(50vw - ${CARD_WIDTH / 2}px)`,
+            gap: \`\${GAP}px\`
+          }}
+        >
+          {features.map((feature, i) => {
+            const paddingLeft = viewportW / 2 - CARD_WIDTH / 2;
+            const cardLeft = paddingLeft + i * (CARD_WIDTH + GAP);
+            const cardCenterAbs = cardLeft + CARD_WIDTH / 2;
+            const viewCenterAbs = scrollX + viewportW / 2;
+            
+            const distance = cardCenterAbs - viewCenterAbs;
+            
+            // Normalize distance relative to viewport width
+            const maxDist = viewportW * 0.6; 
+            let normalized = distance / maxDist;
+            if (normalized > 1) normalized = 1;
+            if (normalized < -1) normalized = -1;
+
+            const rotateY = normalized * 35; // rotate up to 35 degrees
+            const scale = 1 - Math.abs(normalized) * 0.15; // scale down to 0.85
+            const opacity = 1 - Math.abs(normalized) * 0.4; // fade slightly
+            const translateZ = -Math.abs(normalized) * 100; // push back 100px
+            const zIndex = 100 - Math.abs(Math.round(normalized * 100));
+
+            return (
+              <div 
+                key={i}
+                className="snap-center shrink-0 bg-white/90 backdrop-blur-md border border-gray-100 shadow-[0_20px_60px_rgb(0,0,0,0.06)] rounded-[2.5rem] p-10 flex flex-col items-start transition-transform duration-75 will-change-transform cursor-pointer hover:border-[#6366f1]/30 hover:shadow-[0_20px_60px_rgba(99,102,241,0.15)]"
+                style={{
+                  width: \`\${CARD_WIDTH}px\`,
+                  transform: \`rotateY(\${rotateY}deg) scale(\${scale}) translateZ(\${translateZ}px)\`,
+                  opacity: opacity,
+                  zIndex: zIndex,
+                  transformStyle: 'preserve-3d'
+                }}
+              >
+                <div className="w-16 h-16 bg-gradient-to-br from-[#f4f5ff] to-[#eef0ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-8 shadow-sm">
+                  {feature.icon}
+                </div>
+                <h4 className="font-bold text-[#111827] mb-4 text-xl">{feature.title}</h4>
+                <p className="text-gray-500 font-medium leading-relaxed">
+                  {feature.desc}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
 
 export default Welcome;
