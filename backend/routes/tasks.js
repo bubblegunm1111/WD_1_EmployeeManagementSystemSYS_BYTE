@@ -59,10 +59,18 @@ router.put('/:id', async (req, res) => {
   try {
     const { title, description, due, priority, status } = req.body;
     const db = await getDbConnection();
+    const existing = await db.get('SELECT * FROM tasks WHERE id = ?', [req.params.id]);
+    if (!existing) return res.status(404).json({ error: 'Task not found' });
+    
+    const newTitle = title !== undefined ? title : existing.title;
+    const newDesc = description !== undefined ? description : existing.description;
+    const newDue = due !== undefined ? due : existing.due;
+    const newPriority = priority !== undefined ? priority : existing.priority;
+    const newStatus = status !== undefined ? status : existing.status;
     
     await db.run(
       `UPDATE tasks SET title = ?, description = ?, due = ?, priority = ?, status = ? WHERE id = ?`,
-      [title, description, due, priority, status, req.params.id]
+      [newTitle, newDesc, newDue, newPriority, newStatus, req.params.id]
     );
     
     const updatedTask = await db.get('SELECT * FROM tasks WHERE id = ?', [req.params.id]);
