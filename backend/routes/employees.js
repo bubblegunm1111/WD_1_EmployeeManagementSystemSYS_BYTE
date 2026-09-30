@@ -171,7 +171,7 @@ router.post('/', async (req, res) => {
     
     res.status(201).json({ 
       id: result.lastID,
-      first_name, last_name, email, phone_number, position, department, status, salary, hire_date,
+      first_name, last_name, email, phone_number, position, department, status, basic_salary, hire_date,
       firebase_uid: firebaseUid,
       department_id, team_id, manager_id,
       tempPassword
