@@ -148,6 +148,7 @@ function Dashboard() {
             searchQuery={searchQuery}
             departmentFilter={departmentFilter}
             statusFilter={statusFilter}
+            onStatusClick={setStatusFilter}
             viewMode={viewMode}
             onEmployeesLoaded={(data) => {
               setStats({

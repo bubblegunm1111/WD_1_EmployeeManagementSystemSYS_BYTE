@@ -37,7 +37,21 @@ function EmployeeModal({ isOpen, onClose, onSuccess, initialData }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleNext = () => setStep(step + 1);
+  const handleNext = () => {
+    if (step === 1) {
+      if (!formData.firstName || !formData.lastName || !formData.email) {
+        alert('Please fill in all required fields (First Name, Last Name, Email Address) to continue.');
+        return;
+      }
+    }
+    if (step === 2) {
+      if (!formData.position || !formData.salary) {
+        alert('Please fill in all required fields (Job Title, Salary) to continue.');
+        return;
+      }
+    }
+    setStep(step + 1);
+  };
   const handleBack = () => setStep(step - 1);
 
   const handleSubmit = async (e) => {
@@ -138,17 +152,17 @@ function EmployeeModal({ isOpen, onClose, onSuccess, initialData }) {
             <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">First Name</label>
-                  <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] font-bold text-gray-700 transition shadow-sm" placeholder="Jane" />
+                  <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">First Name <span className="text-red-500 ml-1">*</span></label>
+                  <input type="text" name="firstName" required value={formData.firstName} onChange={handleChange} className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] font-bold text-gray-700 transition shadow-sm" placeholder="Jane" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">Last Name</label>
-                  <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] font-bold text-gray-700 transition shadow-sm" placeholder="Doe" />
+                  <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">Last Name <span className="text-red-500 ml-1">*</span></label>
+                  <input type="text" name="lastName" required value={formData.lastName} onChange={handleChange} className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] font-bold text-gray-700 transition shadow-sm" placeholder="Doe" />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">Email Address</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] font-bold text-gray-700 transition shadow-sm" placeholder="jane.doe@company.com" />
+                <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">Email Address <span className="text-red-500 ml-1">*</span></label>
+                <input type="email" name="email" required value={formData.email} onChange={handleChange} className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] font-bold text-gray-700 transition shadow-sm" placeholder="jane.doe@company.com" />
               </div>
             </div>
           )}
@@ -157,8 +171,8 @@ function EmployeeModal({ isOpen, onClose, onSuccess, initialData }) {
             <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">Job Title</label>
-                  <input type="text" name="position" value={formData.position} onChange={handleChange} className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] font-bold text-gray-700 transition shadow-sm" placeholder="Software Engineer" />
+                  <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">Job Title <span className="text-red-500 ml-1">*</span></label>
+                  <input type="text" name="position" required value={formData.position} onChange={handleChange} className="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] font-bold text-gray-700 transition shadow-sm" placeholder="Software Engineer" />
                 </div>
                 <div>
                   <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">Department</label>
@@ -174,10 +188,10 @@ function EmployeeModal({ isOpen, onClose, onSuccess, initialData }) {
               </div>
               <div className="grid grid-cols-2 gap-6 mt-6">
                 <div>
-                  <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">Salary (Annual)</label>
+                  <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-2.5">Salary (Annual) <span className="text-red-500 ml-1">*</span></label>
                   <div className="relative">
                     <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-extrabold">$</span>
-                    <input type="number" name="salary" value={formData.salary} onChange={handleChange} className="w-full pl-10 pr-5 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] font-bold text-gray-700 transition shadow-sm" placeholder="85000" />
+                    <input type="number" name="salary" required value={formData.salary} onChange={handleChange} className="w-full pl-10 pr-5 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] font-bold text-gray-700 transition shadow-sm" placeholder="85000" />
                   </div>
                 </div>
                 <div>

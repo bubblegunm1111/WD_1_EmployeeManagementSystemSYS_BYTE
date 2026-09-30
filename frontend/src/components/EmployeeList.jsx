@@ -3,11 +3,12 @@ import { Edit2, Trash2, MoreHorizontal, Mail, DollarSign, Clock, Briefcase } fro
 import api from '../api';
 import EmployeeProfileSlideOver from './EmployeeProfileSlideOver';
 
-function EmployeeList({ refreshTrigger, searchQuery, departmentFilter, statusFilter, viewMode, onEmployeesLoaded, onEditEmployee }) {
+function EmployeeList({ refreshTrigger, searchQuery, departmentFilter, statusFilter, onStatusClick, viewMode, onEmployeesLoaded, onEditEmployee }) {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isSlideOverOpen, setIsSlideOverOpen] = useState(false);
   const [actionMenuOpenId, setActionMenuOpenId] = useState(null);
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);
 
   const fetchEmployees = async () => {
     try {
@@ -28,8 +29,22 @@ function EmployeeList({ refreshTrigger, searchQuery, departmentFilter, statusFil
       try {
         await api.delete(`/employees/${id}`);
         fetchEmployees();
+        setSelectedEmployeeIds(prev => prev.filter(empId => empId !== id));
       } catch (error) {
         console.error('Failed to delete', error);
+      }
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedEmployeeIds.length} employees?`)) {
+      try {
+        await Promise.all(selectedEmployeeIds.map(id => api.delete(`/employees/${id}`)));
+        fetchEmployees();
+        setSelectedEmployeeIds([]);
+      } catch (error) {
+        console.error('Failed to delete employees', error);
+        alert('Failed to delete some employees.');
       }
     }
   };
@@ -62,14 +77,46 @@ function EmployeeList({ refreshTrigger, searchQuery, departmentFilter, statusFil
     return 'bg-[#dc2626]';
   };
 
+  const toggleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedEmployeeIds(filteredEmployees.map(emp => emp.id));
+    } else {
+      setSelectedEmployeeIds([]);
+    }
+  };
+
+  const toggleSelectEmployee = (id) => {
+    setSelectedEmployeeIds(prev => 
+      prev.includes(id) ? prev.filter(eId => eId !== id) : [...prev, id]
+    );
+  };
+
   if (viewMode === 'list') {
     return (
       <>
+        {selectedEmployeeIds.length > 0 && (
+          <div className="bg-white border-b border-gray-100 p-4 flex items-center justify-between z-20">
+            <span className="text-sm font-bold text-gray-700">{selectedEmployeeIds.length} selected</span>
+            <button 
+              onClick={handleBulkDelete}
+              className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-bold hover:bg-red-100 transition cursor-pointer"
+            >
+              <Trash2 size={16} /> Delete Selected
+            </button>
+          </div>
+        )}
         <div className="overflow-x-auto h-full rounded-3xl">
           <table className="w-full text-left border-collapse">
             <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
               <tr className="border-b border-gray-100 text-[10px] uppercase font-extrabold tracking-widest text-gray-400">
-                <th className="px-6 py-4 w-12 text-center"><input type="checkbox" className="rounded border-gray-300 text-[#4f46e5] focus:ring-[#4f46e5]" /></th>
+                <th className="px-6 py-4 w-12 text-center">
+                  <input 
+                    type="checkbox" 
+                    onChange={toggleSelectAll}
+                    checked={filteredEmployees.length > 0 && selectedEmployeeIds.length === filteredEmployees.length}
+                    className="rounded border-gray-300 text-[#4f46e5] focus:ring-[#4f46e5] cursor-pointer" 
+                  />
+                </th>
                 <th className="px-6 py-4">Employee</th>
                 <th className="px-6 py-4">Job Title</th>
                 <th className="px-6 py-4">Department</th>
@@ -82,7 +129,12 @@ function EmployeeList({ refreshTrigger, searchQuery, departmentFilter, statusFil
               {filteredEmployees.map((emp) => (
                 <tr key={emp.id} className="hover:bg-[#f8f9fc] transition cursor-pointer group" onClick={() => openProfile(emp)}>
                   <td className="px-6 py-4 text-center" onClick={e => e.stopPropagation()}>
-                    <input type="checkbox" className="rounded border-gray-300 text-[#4f46e5] focus:ring-[#4f46e5] cursor-pointer" />
+                    <input 
+                      type="checkbox" 
+                      checked={selectedEmployeeIds.includes(emp.id)}
+                      onChange={() => toggleSelectEmployee(emp.id)}
+                      className="rounded border-gray-300 text-[#4f46e5] focus:ring-[#4f46e5] cursor-pointer" 
+                    />
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
@@ -101,8 +153,8 @@ function EmployeeList({ refreshTrigger, searchQuery, departmentFilter, statusFil
                   <td className="px-6 py-4">
                     <span className="text-sm font-bold text-gray-500">{emp.department}</span>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(emp.status)}`}>
+                  <td className="px-6 py-4" onClick={(e) => { e.stopPropagation(); if (onStatusClick) onStatusClick(emp.status); }}>
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold cursor-pointer hover:opacity-80 transition ${getStatusColor(emp.status)}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${getStatusDot(emp.status)}`}></span> {emp.status}
                     </span>
                   </td>
