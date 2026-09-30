@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, Play, Users, Calendar, Umbrella, DollarSign, BarChart2, ShieldCheck } from 'lucide-react';
 
 function Welcome() {
@@ -179,23 +180,6 @@ function Welcome() {
 }
 
 const FeaturesCarousel = () => {
-  const scrollRef = useRef(null);
-  const [scrollX, setScrollX] = useState(0);
-  const [viewportW, setViewportW] = useState(0);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setViewportW(window.innerWidth);
-      const handleResize = () => setViewportW(window.innerWidth);
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }
-  }, []);
-
-  const handleScroll = (e) => {
-    setScrollX(e.target.scrollLeft);
-  };
-
   const features = [
     { title: "Employee Management", icon: <Users size={24} />, desc: "Keep your team organized with centralized employee records and easy management tools." },
     { title: "Attendance Tracking", icon: <Calendar size={24} />, desc: "Monitor working hours, absences and overtime with real-time insights." },
@@ -205,81 +189,53 @@ const FeaturesCarousel = () => {
     { title: "Secure & Reliable", icon: <ShieldCheck size={24} />, desc: "Your data is protected with enterprise-grade security and privacy." },
   ];
 
-  const CARD_WIDTH = 340;
-  const GAP = 48; // 3rem
-
   return (
-    <section className="w-full mt-32 py-32 relative overflow-hidden bg-gradient-to-br from-[#f8f9ff] via-[#fcfcfd] to-[#f4f5ff]">
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
-      
-      {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[600px] bg-gradient-to-r from-[#eef0ff] via-[#e5e7ff] to-[#f4f5ff] blur-[120px] rounded-full opacity-60 pointer-events-none"></div>
-      
-      <div 
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="w-full overflow-x-auto snap-x snap-mandatory hide-scrollbar relative z-20 flex"
-        style={{ perspective: '1500px', scrollBehavior: 'smooth' }}
-      >
-        <div 
-          className="flex items-center h-[450px]"
-          style={{ 
-            paddingLeft: `calc(50vw - ${CARD_WIDTH / 2}px)`, 
-            paddingRight: `calc(50vw - ${CARD_WIDTH / 2}px)`,
-            gap: \`\${GAP}px\`
-          }}
-        >
-          {features.map((feature, i) => {
-            const paddingLeft = viewportW / 2 - CARD_WIDTH / 2;
-            const cardLeft = paddingLeft + i * (CARD_WIDTH + GAP);
-            const cardCenterAbs = cardLeft + CARD_WIDTH / 2;
-            const viewCenterAbs = scrollX + viewportW / 2;
-            
-            const distance = cardCenterAbs - viewCenterAbs;
-            
-            // Normalize distance relative to viewport width
-            const maxDist = viewportW * 0.6; 
-            let normalized = maxDist > 0 ? distance / maxDist : 0;
-            if (normalized > 1) normalized = 1;
-            if (normalized < -1) normalized = -1;
-
-            const rotateY = normalized * 35; // rotate up to 35 degrees
-            const scale = 1 - Math.abs(normalized) * 0.15; // scale down to 0.85
-            const opacity = 1 - Math.abs(normalized) * 0.4; // fade slightly
-            const translateZ = -Math.abs(normalized) * 100; // push back 100px
-            const zIndex = 100 - Math.abs(Math.round(normalized * 100));
-
-            return (
-              <div 
-                key={i}
-                className="snap-center shrink-0 bg-white/90 backdrop-blur-md border border-gray-100 shadow-[0_20px_60px_rgb(0,0,0,0.06)] rounded-[2.5rem] p-10 flex flex-col items-start transition-transform duration-75 will-change-transform cursor-pointer hover:border-[#6366f1]/30 hover:shadow-[0_20px_60px_rgba(99,102,241,0.15)]"
-                style={{
-                  width: \`\${CARD_WIDTH}px\`,
-                  transform: \`rotateY(\${rotateY}deg) scale(\${scale}) translateZ(\${translateZ}px)\`,
-                  opacity: opacity,
-                  zIndex: zIndex,
-                  transformStyle: 'preserve-3d'
-                }}
-              >
-                <div className="w-16 h-16 bg-gradient-to-br from-[#f4f5ff] to-[#eef0ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-8 shadow-sm">
-                  {feature.icon}
-                </div>
-                <h4 className="font-bold text-[#111827] mb-4 text-xl">{feature.title}</h4>
-                <p className="text-gray-500 font-medium leading-relaxed">
-                  {feature.desc}
-                </p>
-              </div>
-            );
-          })}
+    <section className="w-full bg-[#f4f5ff] py-24 relative z-20">
+      <div className="max-w-7xl mx-auto px-6">
+        
+        <div className="text-center mb-16 relative z-10">
+          <h2 className="text-4xl font-black text-[#111827]">Everything you need</h2>
+          <p className="text-gray-500 mt-4 text-lg">Powerful features wrapped in a beautiful interface.</p>
         </div>
+
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '0px 0px -150px 0px' }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { 
+              opacity: 1,
+              transition: { staggerChildren: 0.1 }
+            }
+          }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+          {features.map((feature, i) => (
+            <motion.div 
+              key={i}
+              variants={{
+                hidden: { opacity: 0, scale: 0.8, filter: 'blur(10px)' },
+                visible: {
+                  opacity: 1,
+                  scale: 1,
+                  filter: 'blur(0px)',
+                  transition: { type: "spring", stiffness: 100, damping: 20 }
+                },
+              }}
+              className="bg-white border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl rounded-[2.5rem] p-10 flex flex-col items-start transition-shadow duration-300"
+            >
+              <div className="w-16 h-16 bg-gradient-to-br from-[#f4f5ff] to-[#eef0ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-8 shadow-sm">
+                {feature.icon}
+              </div>
+              <h4 className="font-bold text-[#111827] mb-4 text-xl">{feature.title}</h4>
+              <p className="text-gray-500 font-medium leading-relaxed">
+                {feature.desc}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+
       </div>
     </section>
   );
