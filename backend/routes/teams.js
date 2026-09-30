@@ -29,13 +29,26 @@ router.post('/', async (req, res) => {
 // Update a team
 router.put('/:id', async (req, res) => {
   try {
-    const { name, department_id, manager_id } = req.body;
+    const { name, department_id, manager_id, employee_ids } = req.body;
     const db = await getDbConnection();
     await db.run(`
       UPDATE teams 
       SET name = ?, department_id = ?, manager_id = ?
       WHERE id = ?
-    `, [name, department_id, manager_id, req.params.id]);
+    `, [name, department_id, manager_id || null, req.params.id]);
+
+    if (employee_ids !== undefined) {
+      // First, clear team_id for everyone currently in this team
+      await db.run(`UPDATE employees SET team_id = NULL WHERE team_id = ?`, [req.params.id]);
+      
+      // Then assign the new ones
+      if (Array.isArray(employee_ids) && employee_ids.length > 0) {
+        const placeholders = employee_ids.map(() => '?').join(',');
+        await db.run(`
+          UPDATE employees SET team_id = ?, department_id = ? WHERE id IN (${placeholders})
+        `, [req.params.id, department_id, ...employee_ids]);
+      }
+    }
     
     res.json({ id: req.params.id, ...req.body });
   } catch (error) {

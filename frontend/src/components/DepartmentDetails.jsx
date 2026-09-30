@@ -18,6 +18,7 @@ function DepartmentDetails() {
   const [isAddEmpOpen, setIsAddEmpOpen] = useState(false);
   const [editDeptData, setEditDeptData] = useState({});
   const [teamData, setTeamData] = useState({ name: '', manager_id: '', employee_ids: [] });
+  const [editTeamId, setEditTeamId] = useState(null);
   const [selectedEmpId, setSelectedEmpId] = useState('');
 
   useEffect(() => {
@@ -58,12 +59,39 @@ function DepartmentDetails() {
   const handleAddTeam = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/teams', { ...teamData, department_id: id });
+      if (editTeamId) {
+        await api.put(`/teams/${editTeamId}`, { ...teamData, department_id: id });
+      } else {
+        await api.post('/teams', { ...teamData, department_id: id });
+      }
       setIsAddTeamOpen(false);
       setTeamData({ name: '', manager_id: '', employee_ids: [] });
+      setEditTeamId(null);
       fetchData();
     } catch (err) {
-      alert("Failed to create team");
+      alert(`Failed to ${editTeamId ? 'update' : 'create'} team`);
+    }
+  };
+
+  const openEditTeam = (team) => {
+    const teamEmps = allEmployees.filter(e => e.team_id === team.id).map(e => e.id);
+    setTeamData({
+      name: team.name,
+      manager_id: team.manager_id || '',
+      employee_ids: teamEmps
+    });
+    setEditTeamId(team.id);
+    setIsAddTeamOpen(true);
+  };
+
+  const handleDeleteTeam = async (teamId) => {
+    if (window.confirm('Are you sure you want to delete this team? Employees will be unassigned from the team.')) {
+      try {
+        await api.delete(`/teams/${teamId}`);
+        fetchData();
+      } catch (err) {
+        alert('Failed to delete team');
+      }
     }
   };
 
@@ -157,7 +185,7 @@ function DepartmentDetails() {
         <div className="mb-10">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-extrabold text-[#1e293b]">Teams</h2>
-            <button onClick={() => setIsAddTeamOpen(true)} className="flex items-center gap-1.5 text-sm font-bold text-[#4f46e5] hover:text-[#4338ca] transition bg-[#e0e7ff] px-3 py-1.5 rounded-lg">
+            <button onClick={() => { setEditTeamId(null); setTeamData({ name: '', manager_id: '', employee_ids: [] }); setIsAddTeamOpen(true); }} className="flex items-center gap-1.5 text-sm font-bold text-[#4f46e5] hover:text-[#4338ca] transition bg-[#e0e7ff] px-3 py-1.5 rounded-lg">
               <Plus size={16} /> Add Team
             </button>
           </div>
@@ -188,10 +216,10 @@ function DepartmentDetails() {
                         {team.employee_count}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button className="text-gray-400 hover:text-[#4f46e5] transition p-1">
+                        <button onClick={() => openEditTeam(team)} className="text-gray-400 hover:text-[#4f46e5] transition p-1 cursor-pointer">
                           <Edit2 size={16} />
                         </button>
-                        <button className="text-gray-400 hover:text-red-500 transition p-1 ml-2">
+                        <button onClick={() => handleDeleteTeam(team.id)} className="text-gray-400 hover:text-red-500 transition p-1 ml-2 cursor-pointer">
                           <Trash2 size={16} />
                         </button>
                       </td>
@@ -245,8 +273,20 @@ function DepartmentDetails() {
                       {new Date(emp.hire_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="text-gray-400 hover:text-gray-800 transition px-3 py-1 rounded-lg text-xs font-bold border border-gray-200">
-                        Move
+                      <button 
+                        onClick={async () => {
+                          if(window.confirm(`Are you sure you want to remove ${emp.first_name} from this department?`)) {
+                            try {
+                              await api.put(`/employees/${emp.id}`, { ...emp, department_id: null, team_id: null, manager_id: null });
+                              fetchData();
+                            } catch (err) {
+                              alert('Failed to remove employee');
+                            }
+                          }
+                        }}
+                        className="text-red-400 hover:text-red-600 hover:bg-red-50 transition px-3 py-1 rounded-lg text-xs font-bold border border-gray-200 hover:border-red-200 cursor-pointer"
+                      >
+                        Remove
                       </button>
                     </td>
                   </tr>
@@ -297,11 +337,11 @@ function DepartmentDetails() {
         </div>
       )}
 
-      {/* Add Team Modal */}
+      {/* Add/Edit Team Modal */}
       {isAddTeamOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl w-full max-w-lg p-8 shadow-2xl" onClick={e => e.stopPropagation()}>
-            <h2 className="text-2xl font-extrabold text-[#1e293b] mb-6">Create New Team</h2>
+            <h2 className="text-2xl font-extrabold text-[#1e293b] mb-6">{editTeamId ? 'Edit Team' : 'Create New Team'}</h2>
             <form onSubmit={handleAddTeam} className="flex flex-col gap-5">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1">Team Name <span className="text-red-500">*</span></label>
@@ -348,8 +388,8 @@ function DepartmentDetails() {
               </div>
 
               <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
-                <button type="button" onClick={() => setIsAddTeamOpen(false)} className="px-5 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition">Cancel</button>
-                <button type="submit" className="px-6 py-2 bg-[#4f46e5] text-white font-bold rounded-xl shadow-sm hover:bg-[#4338ca] transition">Create Team</button>
+                <button type="button" onClick={() => setIsAddTeamOpen(false)} className="px-5 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition cursor-pointer">Cancel</button>
+                <button type="submit" className="px-6 py-2 bg-[#4f46e5] text-white font-bold rounded-xl shadow-sm hover:bg-[#4338ca] transition cursor-pointer">{editTeamId ? 'Save Changes' : 'Create Team'}</button>
               </div>
             </form>
           </div>
