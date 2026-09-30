@@ -33,7 +33,7 @@ function Welcome() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#fcfcfd] to-[#f4f5ff] flex flex-col font-sans overflow-x-hidden">
+    <div className="h-full w-full bg-gradient-to-b from-[#fcfcfd] to-[#f4f5ff] flex flex-col font-sans overflow-y-auto overflow-x-hidden no-scrollbar">
       
       {/* Decorative background shape */}
       <div className="absolute top-40 left-[-20%] w-[800px] h-[800px] bg-[#eef0ff] rounded-full blur-[100px] opacity-70 pointer-events-none"></div>
