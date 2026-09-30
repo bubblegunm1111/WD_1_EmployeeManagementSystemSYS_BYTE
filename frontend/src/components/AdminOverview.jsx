@@ -8,34 +8,39 @@ function AdminOverview() {
   const [stats, setStats] = useState({ total: 0, workingToday: 0, onLeave: 0, departments: 0 });
   const [activity, setActivity] = useState([]);
   const [pendingLeaves, setPendingLeaves] = useState([]);
+  const [orgName, setOrgName] = useState('your organization');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [empRes, attRes, leaveRes] = await Promise.all([
+        const [empRes, attRes, leaveRes, deptRes, orgRes] = await Promise.all([
           api.get('/employees'),
           api.get(`/attendance?date=${new Date().toISOString().split('T')[0]}`),
-          api.get('/leave')
+          api.get('/leave'),
+          api.get('/departments'),
+          api.get('/auth/organization').catch(() => null)
         ]);
         
         const employees = empRes.data;
         const attendance = attRes.data;
         const leaves = leaveRes.data;
-
-        // Calculate unique departments
-        const depts = new Set(employees.map(e => e.department).filter(Boolean));
+        const departmentsData = deptRes.data;
         
         setStats({
           total: employees.length,
           workingToday: attendance.length,
           onLeave: employees.filter(e => e.status === 'On Leave').length,
-          departments: depts.size
+          departments: departmentsData.length
         });
 
         setActivity(attendance.slice(0, 5)); // Just take latest 5 clocks
         
         const pending = leaves.filter(l => l.status === 'Pending');
         setPendingLeaves(pending);
+        
+        if (orgRes && orgRes.data && orgRes.data.name) {
+          setOrgName(orgRes.data.name);
+        }
       } catch (err) {
         console.error('Failed to load overview data', err);
       }
@@ -74,7 +79,7 @@ function AdminOverview() {
         <div className="flex justify-between items-start mb-10">
           <div>
             <h1 className="text-3xl font-extrabold text-[#1e293b] tracking-tight">Overview</h1>
-            <p className="text-gray-500 mt-1 font-medium">Welcome back, {user?.username || 'Admin'}. Here is what is happening today.</p>
+            <p className="text-gray-500 mt-1 font-medium">Welcome back, {user?.username || 'Admin'}. Here is what is happening today at <strong className="text-[#4f46e5]">{orgName}</strong>.</p>
           </div>
         </div>
 
