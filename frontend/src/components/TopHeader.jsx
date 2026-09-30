@@ -31,10 +31,10 @@ function TopHeader({ isCollapsed, setIsCollapsed, onCreateEmployee }) {
       const fetchNotifs = async () => {
         try {
           if (role === 'employee' && user?.email) {
-            const empRes = await fetch(`http://localhost:3000/api/employees/by-email?email=${user.email}`);
-            const empData = await empRes.json();
-            const leaveRes = await fetch('http://localhost:3000/api/leave');
-            const leaves = await leaveRes.json();
+            const empRes = await api.get(`/employees/by-email?email=${user.email}`);
+            const empData = empRes.data;
+            const leaveRes = await api.get('/leave');
+            const leaves = leaveRes.data;
             
             const resolved = leaves
               .filter(l => l.employee_id === empData.id && l.status !== 'Pending')
@@ -43,8 +43,8 @@ function TopHeader({ isCollapsed, setIsCollapsed, onCreateEmployee }) {
               
             setNotifications(resolved);
           } else if (role === 'admin') {
-            const leaveRes = await fetch('http://localhost:3000/api/leave');
-            const leaves = await leaveRes.json();
+            const leaveRes = await api.get('/leave');
+            const leaves = leaveRes.data;
             
             const pending = leaves
               .filter(l => l.status === 'Pending')

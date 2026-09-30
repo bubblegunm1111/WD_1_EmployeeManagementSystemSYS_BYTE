@@ -8,6 +8,7 @@ import {
   onAuthStateChanged 
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
+import api from '../api';
 
 const AuthContext = createContext(null);
 
@@ -69,18 +70,12 @@ export const AuthProvider = ({ children }) => {
     if (selectedRole === 'admin') {
       try {
         const token = await userCredential.user.getIdToken();
-        await fetch('http://localhost:3000/api/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            email,
-            uid: userCredential.user.uid,
-            orgName: additionalData.orgName,
-            fullName: additionalData.fullName
-          })
+        localStorage.setItem('token', token);
+        await api.post('/auth/register', {
+          email,
+          uid: userCredential.user.uid,
+          orgName: additionalData.orgName,
+          fullName: additionalData.fullName
         });
       } catch (err) {
         console.error('Failed to register organization on backend', err);
@@ -101,6 +96,24 @@ export const AuthProvider = ({ children }) => {
       setRole('admin');
       localStorage.setItem('role', 'admin');
     } else {
+      // If they are logging in as Admin via Google, ensure they have an organization
+      if (selectedRole === 'admin') {
+        try {
+          const token = await result.user.getIdToken();
+          localStorage.setItem('token', token);
+          await api.post('/auth/register', {
+            email: result.user.email,
+            uid: result.user.uid,
+            orgName: `${result.user.displayName || 'My'} Organization`,
+            fullName: result.user.displayName
+          });
+        } catch (err) {
+          // If it fails with 409, it means the organization already exists, which is fine!
+          if (err.response?.status !== 409) {
+            console.error('Failed to auto-register google admin organization', err);
+          }
+        }
+      }
       setRole(selectedRole);
     }
     
