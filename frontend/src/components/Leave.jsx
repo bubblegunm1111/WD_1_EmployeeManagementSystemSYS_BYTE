@@ -147,7 +147,7 @@ function Leave() {
   };
 
   return (
-    <div className="flex flex-col xl:flex-row flex-1 h-full w-full bg-[#fdfcfa] overflow-y-auto xl:overflow-hidden p-0">
+    <div className="flex flex-col xl:flex-row flex-1 xl:h-full w-full bg-[#fdfcfa] overflow-y-auto xl:overflow-hidden p-0">
       
       {/* Left Column - Main Content */}
       <div className="flex-1 flex flex-col xl:h-full px-6 sm:px-12 py-10 min-h-0 min-w-0 xl:overflow-y-auto custom-scrollbar">
