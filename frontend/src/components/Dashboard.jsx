@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import EmployeeList from './EmployeeList';
 import EmployeeModal from './EmployeeModal';
 import EditEmployeeModal from './EditEmployeeModal';
-import { Search, Bell, Users, UserCheck, UserMinus, UserX, Plus, List, LayoutGrid, ChevronRight, Download } from 'lucide-react';
+import { Search, Bell, Users, UserCheck, UserMinus, UserX, Plus, List, LayoutGrid, ChevronRight, Upload } from 'lucide-react';
+import api from '../api';
 import { useAuth } from '../context/AuthContext';
 
 import { EventBus } from './Layout';
@@ -126,23 +127,54 @@ function Dashboard() {
           </div>
 
           <div className="flex items-center gap-2 bg-gray-50 p-1 rounded-full border border-gray-200">
-            <button 
-              onClick={() => {
-                const csvContent = "data:text/csv;charset=utf-8,First Name,Last Name,Email,Position,Department,Status,Salary\n" 
-                  + "John,Doe,john@example.com,Engineer,Engineering,Active,85000\n"
-                  + "Jane,Smith,jane@example.com,Designer,Design,Active,90000";
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "employees_export.csv");
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
-              className="px-4 py-1.5 rounded-full hover:bg-white hover:shadow-sm text-sm font-bold text-gray-500 hover:text-green-600 transition flex items-center gap-2 cursor-pointer"
-            >
-              <Download size={16} /> Export
-            </button>
+            <label className="px-4 py-1.5 rounded-full hover:bg-white hover:shadow-sm text-sm font-bold text-gray-500 hover:text-[#8b8cf8] transition flex items-center gap-2 cursor-pointer">
+              <Upload size={16} /> Import
+              <input 
+                type="file" 
+                accept=".csv"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  
+                  const reader = new FileReader();
+                  reader.onload = async (event) => {
+                    const csvData = event.target.result;
+                    const lines = csvData.split('\n').filter(line => line.trim().length > 0);
+                    if (lines.length <= 1) return; // Only headers or empty
+                    
+                    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                    let successCount = 0;
+                    
+                    // Simple CSV parser assuming First Name, Last Name, Email, Position, Salary, Department
+                    for (let i = 1; i < lines.length; i++) {
+                      const values = lines[i].split(',').map(v => v.trim());
+                      if (values.length < 3) continue;
+                      
+                      try {
+                        await api.post('/employees', {
+                          firstName: values[0] || '',
+                          lastName: values[1] || '',
+                          email: values[2] || '',
+                          position: values[3] || 'Employee',
+                          department: values[4] || '',
+                          salary: values[5] || '0',
+                          status: 'Active',
+                          role: 'employee'
+                        });
+                        successCount++;
+                      } catch (err) {
+                        console.error('Failed to import row', i, err);
+                      }
+                    }
+                    alert(`Successfully imported ${successCount} employees!`);
+                    setRefreshTrigger(prev => prev + 1);
+                  };
+                  reader.readAsText(file);
+                  e.target.value = ''; // Reset input
+                }}
+              />
+            </label>
             <div className="w-px h-6 bg-gray-200 mx-1"></div>
             <button 
               onClick={() => setViewMode('list')}
