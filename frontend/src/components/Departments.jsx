@@ -72,7 +72,7 @@ function Departments() {
   return (
     <div className="flex h-full w-full bg-[#fdfcfa] overflow-hidden">
       <div className="flex-1 flex flex-col overflow-y-auto px-8 py-6 max-w-[1600px] mx-auto">
-        <div className="flex justify-between items-start mb-10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
           <div>
             <h1 className="text-3xl font-extrabold text-[#1e293b] tracking-tight">Departments</h1>
             <p className="text-gray-500 mt-1 font-medium">Manage company structure, teams, and assignments.</p>

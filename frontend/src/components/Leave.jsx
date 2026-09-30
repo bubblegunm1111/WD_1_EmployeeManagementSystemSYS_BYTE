@@ -150,23 +150,23 @@ function Leave() {
     <div className="flex flex-1 h-full w-full bg-[#fdfcfa] overflow-hidden p-0">
       
       {/* Left Column - Main Content */}
-      <div className="flex-1 flex flex-col h-full px-12 py-10 min-h-0 min-w-0">
+      <div className="flex-1 flex flex-col h-full px-6 sm:px-12 py-10 min-h-0 min-w-0">
         
         {/* Header */}
-        <div className="flex justify-between items-start mb-8 shrink-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 shrink-0">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#f3e8ff] rounded-2xl flex items-center justify-center text-[#8b8cf8]">
+            <div className="w-12 h-12 bg-[#f3e8ff] rounded-2xl flex items-center justify-center text-[#8b8cf8] shrink-0">
               <CalendarIcon size={24} />
             </div>
             <div>
-              <h1 className="text-3xl font-extrabold text-[#1e293b] tracking-tight">Leave</h1>
-              <p className="text-gray-500 font-medium">Manage employee leave requests, track balances and view leave history.</p>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1e293b] tracking-tight">Leave</h1>
+              <p className="text-gray-500 font-medium text-sm sm:text-base">Manage employee leave requests, track balances and view leave history.</p>
             </div>
           </div>
         </div>
 
         {/* Summary Cards Grid */}
-        <div className="grid grid-cols-4 gap-4 mb-8 shrink-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8 shrink-0">
           <div 
             onClick={() => setStatusFilter('All')}
             className={`p-5 rounded-2xl border cursor-pointer transition ${statusFilter === 'All' ? 'bg-[#e0e7ff] border-[#c7d2fe] ring-2 ring-[#8b8cf8]' : 'bg-[#f3e8ff] border-[#e9d5ff] hover:bg-[#e0e7ff]'}`}
@@ -240,8 +240,8 @@ function Leave() {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center justify-between gap-4 mb-6 shrink-0 overflow-x-auto no-scrollbar pb-2">
-          <div className="flex items-center gap-3 shrink-0">
+        <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 mb-6 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 overflow-x-auto no-scrollbar pb-2">
             <div className="relative">
               <select 
                 onChange={(e) => {
@@ -301,7 +301,7 @@ function Leave() {
             </div>
           </div>
           
-          <div className="relative w-64">
+          <div className="relative w-full xl:w-64">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
             <input
               type="text"
@@ -314,7 +314,7 @@ function Leave() {
         </div>
 
         {/* Table Area */}
-        <div className="flex-1 min-h-0 bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col relative overflow-hidden">
+        <div className="flex-1 min-h-[300px] bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col relative overflow-hidden">
           <div className="flex-1 overflow-auto no-scrollbar">
             <table className="w-full text-left border-collapse min-w-[900px]">
               <thead>

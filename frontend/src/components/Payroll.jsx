@@ -61,12 +61,12 @@ function Payroll() {
       <div className="flex-1 flex flex-col overflow-y-auto px-8 py-6 max-w-[1600px] mx-auto custom-scrollbar">
         
         {/* Header */}
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-extrabold text-[#1e293b] tracking-tight mb-2">Payroll</h1>
             <p className="text-gray-500 font-medium">Manage employee salaries, additions, deductions, and final payroll.</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <input 
               type="month" 
               value={selectedMonth}
