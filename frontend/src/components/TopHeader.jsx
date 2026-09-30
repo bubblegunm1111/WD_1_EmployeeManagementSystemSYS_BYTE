@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Search, Grid, Bell, Plus, PanelLeftClose, PanelLeftOpen, LogOut, User, Settings } from 'lucide-react';
+import { Search, Grid, Bell, Plus, PanelLeftClose, PanelLeftOpen, LogOut, User, Settings, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 
-function TopHeader({ isCollapsed, setIsCollapsed, onCreateEmployee }) {
+function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen, onCreateEmployee }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, role, logout } = useAuth();
@@ -98,16 +98,24 @@ function TopHeader({ isCollapsed, setIsCollapsed, onCreateEmployee }) {
 
         <div className="h-6 w-px bg-gray-200"></div>
 
-        {/* Sidebar Toggle */}
+        {/* Sidebar Toggle Desktop */}
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-gray-400 hover:text-gray-600 transition cursor-pointer"
+          className="hidden md:block text-gray-400 hover:text-gray-600 transition cursor-pointer"
         >
           {isCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
         </button>
 
+        {/* Sidebar Toggle Mobile */}
+        <button 
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+          className="md:hidden text-gray-400 hover:text-gray-600 transition cursor-pointer"
+        >
+          <Menu size={24} />
+        </button>
+
         {/* Page Title */}
-        <h1 className="text-lg font-bold text-[#1e293b]">{pageName}</h1>
+        <h1 className="text-lg font-bold text-[#1e293b] hidden sm:block">{pageName}</h1>
       </div>
 
       {/* Right side: Search, Icons, Avatar */}

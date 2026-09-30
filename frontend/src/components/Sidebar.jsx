@@ -6,10 +6,15 @@ import {
   DollarSign, PieChart, Settings, LogOut, FileText, User, Monitor
 } from 'lucide-react';
 
-function Sidebar({ isCollapsed }) {
+function Sidebar({ isCollapsed, setIsMobileOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, role } = useAuth();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    if (setIsMobileOpen) setIsMobileOpen(false);
+  };
 
   const handleLogout = () => {
     logout();
@@ -23,7 +28,7 @@ function Sidebar({ isCollapsed }) {
     
     return (
       <button 
-        onClick={() => navigate(path)}
+        onClick={() => handleNavigation(path)}
         className={`flex items-center gap-4 px-4 py-3 rounded-[14px] transition-all w-full text-left cursor-pointer overflow-hidden whitespace-nowrap
           ${isActive 
             ? 'bg-[#e0e7ff] text-[#4f46e5] font-bold' 
@@ -53,7 +58,7 @@ function Sidebar({ isCollapsed }) {
   );
 
   return (
-    <div className={`relative h-[calc(100vh-6rem)] bg-[#1a1a1a] text-white rounded-[2.5rem] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto overflow-x-hidden no-scrollbar transition-all duration-300 ease-in-out group ${isCollapsed ? 'w-24 p-4' : 'w-64'}`}>
+    <div className={`relative h-full md:h-[calc(100vh-6rem)] bg-[#1a1a1a] text-white rounded-r-[2.5rem] md:rounded-[2.5rem] p-6 flex flex-col justify-between shadow-2xl overflow-y-auto overflow-x-hidden no-scrollbar transition-all duration-300 ease-in-out group ${isCollapsed ? 'md:w-24 md:p-4 w-64' : 'w-64'}`}>
       
       <div>
         {role === 'admin' ? (

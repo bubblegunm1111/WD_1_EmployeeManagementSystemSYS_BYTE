@@ -53,7 +53,7 @@ function AdminOverview() {
 
   return (
     <div className="flex h-full w-full bg-[#fdfcfa] overflow-hidden">
-      <div className="flex-1 flex flex-col overflow-y-auto px-8 py-6 max-w-[1600px] mx-auto">
+      <div className="flex-1 flex flex-col overflow-y-auto px-4 md:px-8 py-4 md:py-6 max-w-[1600px] mx-auto w-full">
         
         {pendingLeaves.length > 0 && (
           <div className="bg-[#fffbeb] border border-[#fef08a] rounded-2xl p-5 mb-6 shadow-sm flex flex-col gap-3">
