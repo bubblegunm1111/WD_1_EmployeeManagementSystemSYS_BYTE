@@ -3,7 +3,7 @@
 > **A modern, full-stack HR and workforce management platform built with React, Node.js, and SQLite — secured by Firebase Authentication.**
 
 🌐 **Live Demo**: [sys-employee-management-system.vercel.app](https://sys-employee-management-system.vercel.app)
-📦 **Repository**: [github.com/bubblegunm1111/sys-employee-management-system](https://github.com/bubblegunm1111/WD_1_EmployeeManagementSystemSYS_BYTE)
+📦 **Repository**: [github.com/bubblegunm1111/WD_1_EmployeeManagementSystemSYS_BYTE](https://github.com/bubblegunm1111/WD_1_EmployeeManagementSystemSYS_BYTE)
 
 ---
 
