@@ -140,7 +140,7 @@ function Login() {
             <input
               type={showPassword ? "text" : "password"}
               required
-              placeholder={role === 'employee' ? 'Temporary password' : 'Password'}
+              placeholder="Password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-transparent focus:outline-none focus:ring-2 focus:ring-[#8b8cf8] focus:bg-white placeholder-gray-400 font-semibold transition"
