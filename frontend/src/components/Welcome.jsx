@@ -1,130 +1,223 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, Play, Users, Calendar, Umbrella, DollarSign, BarChart2, ShieldCheck } from 'lucide-react';
 
 function Welcome() {
   const navigate = useNavigate();
-  const [typedText, setTypedText] = useState('');
   const [showRoleSelection, setShowRoleSelection] = useState(false);
-  
-  const line1 = "The Hub for Your\n";
-  const line2 = "Entire Workplace";
-  const fullText = line1 + line2;
-
-  useEffect(() => {
-    let index = 0;
-    const timer = setInterval(() => {
-      setTypedText(fullText.slice(0, index));
-      index++;
-      if (index > fullText.length) {
-        clearInterval(timer);
-      }
-    }, 40);
-    return () => clearInterval(timer);
-  }, []);
 
   const handleRoleSelect = (role) => {
     navigate('/login', { state: { role } });
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#f8f9fc] flex flex-col relative overflow-hidden transition-colors duration-1000">
+    <div className="min-h-screen w-full bg-[#fcfcfd] flex flex-col font-sans overflow-x-hidden">
       
-      {/* Decorative background shapes */}
-      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#e8fff5] rounded-full blur-[80px] -translate-x-1/2 -translate-y-1/2 opacity-70"></div>
-      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[#f3e8ff] rounded-full blur-[100px] translate-x-1/3 translate-y-1/3 opacity-70"></div>
+      {/* Decorative background shape */}
+      <div className="absolute top-40 left-[-20%] w-[800px] h-[800px] bg-[#eef0ff] rounded-full blur-[100px] opacity-70 pointer-events-none"></div>
 
-      {/* Header */}
-      <header className="w-full px-8 py-6 flex justify-between items-center z-20 absolute top-0 left-0">
+      {/* Navbar */}
+      <header className="w-full max-w-7xl mx-auto px-6 py-6 flex justify-between items-center z-20 relative">
+        {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="flex -space-x-2">
+          <div className="flex -space-x-1.5 opacity-90">
              <div className="w-5 h-8 bg-[#8b8cf8] rounded-full"></div>
-             <div className="w-5 h-8 bg-[#6366f1] rounded-full"></div>
-             <div className="w-5 h-8 bg-[#4f46e5] rounded-full"></div>
+             <div className="w-5 h-8 bg-[#6366f1] rounded-full mix-blend-multiply"></div>
+             <div className="w-5 h-8 bg-[#4f46e5] rounded-full mix-blend-multiply"></div>
           </div>
-          <span className="text-2xl font-bold text-[#1e1b4b] tracking-tight">SYS</span>
+          <span className="text-2xl font-black text-[#111827] tracking-tight">SYS</span>
         </div>
         
-        <nav className="hidden md:flex items-center gap-8 text-sm font-bold text-gray-400">
-          <button onClick={() => navigate('/')} className="text-gray-900 transition cursor-pointer">Home</button>
-          <button onClick={() => navigate('/about')} className="hover:text-[#8b8cf8] transition cursor-pointer">About Us</button>
-          <button onClick={() => navigate('/contact')} className="hover:text-[#8b8cf8] transition cursor-pointer">Contact Us</button>
+        {/* Nav Links */}
+        <nav className="hidden md:flex items-center gap-10 font-bold text-gray-500">
+          <button onClick={() => navigate('/')} className="text-[#4f46e5] border-b-2 border-[#4f46e5] pb-1 transition cursor-pointer">Home</button>
+          <button onClick={() => navigate('/about')} className="hover:text-[#4f46e5] pb-1 transition cursor-pointer">About Us</button>
+          <button onClick={() => navigate('/contact')} className="hover:text-[#4f46e5] pb-1 transition cursor-pointer">Contact Us</button>
         </nav>
         
+        {/* Actions */}
         <div className="flex items-center gap-6">
-          <button onClick={() => setShowRoleSelection(true)} className="text-sm font-bold text-gray-500 hover:text-gray-900 transition cursor-pointer">
+          <button onClick={() => setShowRoleSelection(true)} className="font-bold text-[#111827] hover:text-[#4f46e5] transition cursor-pointer">
             Login
           </button>
-          <button onClick={() => setShowRoleSelection(true)} className="text-sm font-bold bg-[#8b8cf8] text-white px-6 py-2.5 rounded-full shadow-sm hover:bg-[#7778f2] transition transform hover:-translate-y-0.5 cursor-pointer">
-            Get Started
+          <button onClick={() => setShowRoleSelection(true)} className="flex items-center gap-2 font-bold bg-[#6366f1] text-white px-6 py-2.5 rounded-full shadow-md shadow-indigo-500/20 hover:bg-[#4f46e5] transition transform hover:-translate-y-0.5 cursor-pointer">
+            Get Started <ArrowRight size={16} />
           </button>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 z-10 w-full max-w-4xl mx-auto text-center pt-20 relative h-full">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-6 z-10 relative mt-16 md:mt-24">
         
-        {/* State 1: Welcome Message */}
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full transition-all duration-700 ease-in-out flex flex-col items-center ${showRoleSelection ? 'opacity-0 scale-95 pointer-events-none -translate-y-[60%]' : 'opacity-100 scale-100'}`}>
-             <div className="mb-6 min-h-[140px] md:min-h-[160px] w-full">
-               <h1 className="text-5xl md:text-7xl font-extrabold text-[#111827] tracking-tight whitespace-pre-line leading-[1.1]">
-                 {typedText.substring(0, line1.length)}
-                 <span className="text-[#8b8cf8]">
-                   {typedText.substring(line1.length)}
-                 </span>
-                 <span className="animate-pulse text-[#8b8cf8]">|</span>
-               </h1>
-             </div>
-
-             <p className="text-lg md:text-xl text-gray-500 max-w-3xl leading-relaxed mb-10 font-medium">
-               The all-in-one platform to streamline your HR processes, from payroll and attendance to leave management and announcements. Empower your workforce and simplify your administration.
-             </p>
-
-             <div className="flex flex-col sm:flex-row gap-4 items-center">
-               <button 
-                 onClick={() => setShowRoleSelection(true)}
-                 className="flex items-center justify-center px-10 py-4 rounded-full bg-[#8b8cf8] text-white font-bold text-lg hover:bg-[#7778f2] transition shadow-lg w-56 transform hover:-translate-y-1 cursor-pointer"
-               >
-                 Get started
-               </button>
-             </div>
-        </div>
-
-        {/* State 2: Role Selection */}
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl transition-all duration-700 ease-in-out ${showRoleSelection ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-105 pointer-events-none translate-y-[40%]'}`}>
-          <div className="flex flex-col items-center bg-white/60 backdrop-blur-xl p-12 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
-             <h2 className="text-4xl font-extrabold text-[#111827] mb-3">Who are you?</h2>
-             <p className="text-gray-400 mb-10 font-bold">Select your role to continue logging in or signing up.</p>
-             
-             <div className="flex flex-col sm:flex-row gap-6 w-full justify-center">
-               <button 
-                 onClick={() => handleRoleSelect('employee')}
-                 className="flex flex-col items-center justify-center gap-5 p-10 rounded-[2rem] border-2 border-transparent bg-white hover:border-[#8b8cf8] hover:bg-[#f5f5ff] transition flex-1 group shadow-sm hover:shadow-md cursor-pointer"
-               >
-                 <div className="w-20 h-20 bg-gray-50 group-hover:bg-white rounded-full flex items-center justify-center text-gray-300 group-hover:text-[#8b8cf8] transition shadow-sm">
-                   <Users size={36} />
-                 </div>
-                 <span className="font-extrabold text-2xl text-gray-900">Employee</span>
-               </button>
+        {/* Role Selection Overlay (Hidden by default) */}
+        {showRoleSelection && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+            <div className="flex flex-col items-center bg-white p-12 rounded-[2.5rem] shadow-[0_8px_40px_rgb(0,0,0,0.08)] border border-gray-100 max-w-2xl w-full mx-4 relative animate-in fade-in zoom-in-95 duration-300">
+               <button onClick={() => setShowRoleSelection(false)} className="absolute top-6 right-8 text-gray-400 hover:text-gray-900 font-bold cursor-pointer">✕</button>
+               <h2 className="text-4xl font-black text-[#111827] mb-3">Who are you?</h2>
+               <p className="text-gray-500 mb-10 font-medium">Select your role to continue logging in or signing up.</p>
                
-               <button 
-                 onClick={() => handleRoleSelect('admin')}
-                 className="flex flex-col items-center justify-center gap-5 p-10 rounded-[2rem] border-2 border-transparent bg-white hover:border-[#8b8cf8] hover:bg-[#f5f5ff] transition flex-1 group shadow-sm hover:shadow-md cursor-pointer"
-               >
-                 <div className="w-20 h-20 bg-gray-50 group-hover:bg-white rounded-full flex items-center justify-center text-gray-300 group-hover:text-[#8b8cf8] transition shadow-sm">
-                   <ShieldCheck size={36} />
-                 </div>
-                 <span className="font-extrabold text-2xl text-gray-900">Admin</span>
-               </button>
-             </div>
-             
-             <button onClick={() => setShowRoleSelection(false)} className="mt-10 text-sm font-bold text-gray-400 hover:text-gray-900 transition cursor-pointer">
-               &larr; Back
-             </button>
+               <div className="flex flex-col sm:flex-row gap-6 w-full justify-center">
+                 <button 
+                   onClick={() => handleRoleSelect('employee')}
+                   className="flex flex-col items-center justify-center gap-5 p-10 rounded-[2rem] border-2 border-gray-100 bg-white hover:border-[#6366f1] hover:bg-[#f8f9ff] transition flex-1 group shadow-sm hover:shadow-md cursor-pointer"
+                 >
+                   <div className="w-20 h-20 bg-[#f8f9ff] group-hover:bg-white rounded-full flex items-center justify-center text-[#6366f1] transition shadow-sm">
+                     <Users size={36} />
+                   </div>
+                   <span className="font-extrabold text-2xl text-[#111827]">Employee</span>
+                 </button>
+                 
+                 <button 
+                   onClick={() => handleRoleSelect('admin')}
+                   className="flex flex-col items-center justify-center gap-5 p-10 rounded-[2rem] border-2 border-gray-100 bg-white hover:border-[#6366f1] hover:bg-[#f8f9ff] transition flex-1 group shadow-sm hover:shadow-md cursor-pointer"
+                 >
+                   <div className="w-20 h-20 bg-[#f8f9ff] group-hover:bg-white rounded-full flex items-center justify-center text-[#6366f1] transition shadow-sm">
+                     <ShieldCheck size={36} />
+                   </div>
+                   <span className="font-extrabold text-2xl text-[#111827]">Admin</span>
+                 </button>
+               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Hero Section */}
+        <div className={`flex flex-col lg:flex-row items-center gap-12 lg:gap-8 transition-opacity duration-500 ${showRoleSelection ? 'opacity-0' : 'opacity-100'}`}>
+          
+          {/* Left: Text & CTA */}
+          <div className="flex-1 flex flex-col items-start text-left max-w-2xl">
+            <div className="flex items-center gap-2 bg-[#f4f5ff] text-[#6366f1] px-4 py-1.5 rounded-full font-bold text-sm mb-8 border border-[#e5e7ff]">
+              <Sparkles size={16} /> Modern HR Management Platform
+            </div>
+            
+            <h1 className="text-6xl md:text-7xl font-black text-[#111827] tracking-tight leading-[1.1] mb-6">
+              The Hub for Your <br/>
+              <span className="text-[#6366f1]">Entire Workplace</span>
+            </h1>
+            
+            <p className="text-lg md:text-xl text-gray-500 leading-relaxed mb-10 font-medium max-w-xl">
+              The all-in-one platform to streamline your HR processes, from payroll and attendance to leave management and announcements. Empower your workforce and simplify your administration.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 items-center mb-16">
+              <button 
+                onClick={() => setShowRoleSelection(true)}
+                className="flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-[#6366f1] text-white font-bold text-lg hover:bg-[#4f46e5] shadow-lg shadow-indigo-500/20 transition transform hover:-translate-y-1 cursor-pointer w-full sm:w-auto"
+              >
+                Get Started <ArrowRight size={20} />
+              </button>
+              <button 
+                className="flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-white text-[#111827] font-bold text-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition cursor-pointer w-full sm:w-auto"
+              >
+                <Play size={18} className="text-[#6366f1]" /> Watch Demo
+              </button>
+            </div>
+
+            {/* Stats */}
+            <div className="flex flex-wrap gap-12 md:gap-16 pt-8 border-t border-gray-100 w-full">
+              <div>
+                <h4 className="text-2xl font-black text-[#111827]">100+</h4>
+                <p className="text-sm font-medium text-gray-400 mt-1">Happy Companies</p>
+              </div>
+              <div>
+                <h4 className="text-2xl font-black text-[#111827]">50K+</h4>
+                <p className="text-sm font-medium text-gray-400 mt-1">Employees Managed</p>
+              </div>
+              <div>
+                <h4 className="text-2xl font-black text-[#111827]">99.9%</h4>
+                <p className="text-sm font-medium text-gray-400 mt-1">Uptime</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Mockup Graphic */}
+          <div className="flex-1 w-full flex justify-center lg:justify-end relative">
+            <div className="relative w-full max-w-[800px] xl:max-w-[900px] lg:scale-110 lg:translate-x-12 xl:translate-x-20">
+              <img 
+                src="/hero-mockup.png" 
+                alt="SYS Dashboard Mockup" 
+                className="w-full h-auto object-contain drop-shadow-2xl rounded-2xl"
+              />
+            </div>
           </div>
         </div>
 
-      </div>
+      </main>
+
+      {/* Features Grid */}
+      <section className="w-full bg-white mt-32 py-24 border-t border-gray-100 relative z-20">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-x-8 gap-y-12">
+          
+          {/* Feature 1 */}
+          <div className="flex flex-col items-start col-span-1">
+            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
+              <Users size={24} />
+            </div>
+            <h4 className="font-bold text-[#111827] mb-2 text-base">Employee Management</h4>
+            <p className="text-sm text-gray-500 font-medium leading-relaxed">
+              Keep your team organized with centralized employee records and easy management tools.
+            </p>
+          </div>
+
+          {/* Feature 2 */}
+          <div className="flex flex-col items-start col-span-1">
+            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
+              <Calendar size={24} />
+            </div>
+            <h4 className="font-bold text-[#111827] mb-2 text-base">Attendance Tracking</h4>
+            <p className="text-sm text-gray-500 font-medium leading-relaxed">
+              Monitor working hours, absences and overtime with real-time insights.
+            </p>
+          </div>
+
+          {/* Feature 3 */}
+          <div className="flex flex-col items-start col-span-1">
+            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
+              <Umbrella size={24} />
+            </div>
+            <h4 className="font-bold text-[#111827] mb-2 text-base">Leave Management</h4>
+            <p className="text-sm text-gray-500 font-medium leading-relaxed">
+              Handle leave requests, approvals and balances effortlessly.
+            </p>
+          </div>
+
+          {/* Feature 4 */}
+          <div className="flex flex-col items-start col-span-1">
+            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
+              <DollarSign size={24} />
+            </div>
+            <h4 className="font-bold text-[#111827] mb-2 text-base">Payroll Processing</h4>
+            <p className="text-sm text-gray-500 font-medium leading-relaxed">
+              Automate calculations and manage salaries, bonuses and deductions.
+            </p>
+          </div>
+
+          {/* Feature 5 */}
+          <div className="flex flex-col items-start col-span-1">
+            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
+              <BarChart2 size={24} />
+            </div>
+            <h4 className="font-bold text-[#111827] mb-2 text-base">Powerful Reports</h4>
+            <p className="text-sm text-gray-500 font-medium leading-relaxed">
+              Get the data you need with customizable and exportable reports.
+            </p>
+          </div>
+
+          {/* Feature 6 */}
+          <div className="flex flex-col items-start col-span-1">
+            <div className="w-12 h-12 bg-[#f4f5ff] rounded-2xl flex items-center justify-center text-[#6366f1] mb-5">
+              <ShieldCheck size={24} />
+            </div>
+            <h4 className="font-bold text-[#111827] mb-2 text-base">Secure & Reliable</h4>
+            <p className="text-sm text-gray-500 font-medium leading-relaxed">
+              Your data is protected with enterprise-grade security and privacy.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
     </div>
   );
 }
