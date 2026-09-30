@@ -53,7 +53,7 @@ function Layout() {
         </div>
 
         {/* Dynamic Page Content */}
-        <div className="flex flex-col flex-1 overflow-y-auto relative no-scrollbar rounded-[2rem]">
+        <div className="flex flex-col flex-1 overflow-hidden relative no-scrollbar rounded-[2rem]">
           <Outlet />
         </div>
 
