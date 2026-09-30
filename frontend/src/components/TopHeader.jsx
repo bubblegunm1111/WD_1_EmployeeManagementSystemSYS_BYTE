@@ -63,6 +63,23 @@ function TopHeader({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen,
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
   
+  const markAllRead = async () => {
+    try {
+      if (role === 'admin') {
+        await api.put('/notifications/mark-all-read/admin');
+      } else if (user?.email) {
+        const empRes = await api.get(`/employees/by-email?email=${encodeURIComponent(user.email)}`);
+        if (empRes.data?.id) {
+          await api.put(`/notifications/mark-all-read/${empRes.data.id}`);
+        }
+      }
+      // Re-fetch notifications after marking read
+      setNotifications(prev => Array.isArray(prev) ? prev.map(n => ({...n, is_read: 1})) : []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Create a nice title from the path
   const pathParts = location.pathname.split('/').filter(Boolean);
   const pageName = pathParts.length > 1 
