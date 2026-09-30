@@ -18,13 +18,22 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Listen to Firebase Auth state changes
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser({ 
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           username: firebaseUser.displayName || firebaseUser.email.split('@')[0]
         });
+        
+        // Save token to localStorage for api.js fallback
+        try {
+          const token = await firebaseUser.getIdToken();
+          localStorage.setItem('token', token);
+        } catch (e) {
+          console.error("Failed to get ID token", e);
+        }
+
         // Retrieve role from localStorage for now
         let resolvedRole = localStorage.getItem('role') || 'employee';
         
@@ -38,6 +47,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(null);
         setRole(null);
+        localStorage.removeItem('token');
       }
       setLoading(false);
     });
@@ -55,8 +65,29 @@ export const AuthProvider = ({ children }) => {
   const signup = async (email, password, selectedRole, additionalData) => {
     localStorage.setItem('role', selectedRole);
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    
+    if (selectedRole === 'admin') {
+      try {
+        const token = await userCredential.user.getIdToken();
+        await fetch('http://localhost:3000/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            email,
+            uid: userCredential.user.uid,
+            orgName: additionalData.orgName,
+            fullName: additionalData.fullName
+          })
+        });
+      } catch (err) {
+        console.error('Failed to register organization on backend', err);
+      }
+    }
+    
     setRole(selectedRole);
-    // In a real app, you would save additionalData (like Org Name) to Firestore here
     return userCredential;
   };
 
@@ -79,6 +110,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     await signOut(auth);
     localStorage.removeItem('role');
+    localStorage.removeItem('token');
     setUser(null);
     setRole(null);
   };

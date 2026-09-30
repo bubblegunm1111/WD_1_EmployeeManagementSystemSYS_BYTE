@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, Grid, Bell, Plus, PanelLeftClose, PanelLeftOpen, LogOut, User, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import api from '../api';
 
 function TopHeader({ isCollapsed, setIsCollapsed, onCreateEmployee }) {
   const location = useLocation();
@@ -13,6 +14,17 @@ function TopHeader({ isCollapsed, setIsCollapsed, onCreateEmployee }) {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [notifications, setNotifications] = useState([]);
+  const [orgName, setOrgName] = useState('SYS');
+
+  useEffect(() => {
+    if (role) {
+      api.get('/auth/organization')
+        .then(res => {
+          if (res.data?.name) setOrgName(res.data.name);
+        })
+        .catch(console.error);
+    }
+  }, [role]);
 
   useEffect(() => {
     if (role) {
@@ -81,7 +93,7 @@ function TopHeader({ isCollapsed, setIsCollapsed, onCreateEmployee }) {
              <div className="w-5 h-8 bg-[#6366f1] rounded-full"></div>
              <div className="w-5 h-8 bg-[#4f46e5] rounded-full"></div>
           </div>
-          <span className="text-xl font-bold tracking-tight text-[#1a1a1a]">SYS</span>
+          <span className="text-xl font-bold tracking-tight text-[#1a1a1a]">{orgName}</span>
         </div>
 
         <div className="h-6 w-px bg-gray-200"></div>

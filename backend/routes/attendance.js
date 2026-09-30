@@ -1,7 +1,9 @@
 const express = require('express');
 const { getDbConnection } = require('../db');
+const { requireAuth } = require('../middleware/authMiddleware');
 
 const router = express.Router();
+router.use(requireAuth);
 
 // Get all attendance for a specific date (or all if no date)
 router.get('/', async (req, res) => {
@@ -14,17 +16,18 @@ router.get('/', async (req, res) => {
         SELECT a.*, e.first_name, e.last_name 
         FROM attendance a 
         JOIN employees e ON a.employee_id = e.id 
-        WHERE a.date = ? 
+        WHERE a.date = ? AND e.organization_id = ?
         ORDER BY a.id DESC`, 
-        [date]
+        [date, req.organization_id]
       );
     } else {
       records = await db.all(`
         SELECT a.*, e.first_name, e.last_name 
         FROM attendance a 
         JOIN employees e ON a.employee_id = e.id 
+        WHERE e.organization_id = ?
         ORDER BY a.date DESC, a.id DESC
-      `);
+      `, [req.organization_id]);
     }
     res.json(records);
   } catch (error) {
@@ -37,7 +40,10 @@ router.get('/', async (req, res) => {
 router.get('/:employeeId', async (req, res) => {
   try {
     const db = await getDbConnection();
-    const records = await db.all('SELECT * FROM attendance WHERE employee_id = ? ORDER BY date DESC, id DESC', [req.params.employeeId]);
+    const records = await db.all(
+      'SELECT a.* FROM attendance a JOIN employees e ON a.employee_id = e.id WHERE a.employee_id = ? AND e.organization_id = ? ORDER BY a.date DESC, a.id DESC', 
+      [req.params.employeeId, req.organization_id]
+    );
     res.json(records);
   } catch (error) {
     console.error(error);
@@ -55,6 +61,10 @@ router.post('/', async (req, res) => {
   
   try {
     const db = await getDbConnection();
+    
+    // Verify employee belongs to this organization
+    const emp = await db.get('SELECT id FROM employees WHERE id = ? AND organization_id = ?', [employee_id, req.organization_id]);
+    if (!emp) return res.status(403).json({ error: 'Employee not found in organization' });
     
     // Check if there's an existing record for this date
     // We order by id DESC to get the latest shift for today
@@ -106,6 +116,11 @@ router.post('/break', async (req, res) => {
   
   try {
     const db = await getDbConnection();
+    
+    // Verify ownership
+    const emp = await db.get('SELECT id FROM employees WHERE id = ? AND organization_id = ?', [employee_id, req.organization_id]);
+    if (!emp) return res.status(403).json({ error: 'Employee not found in organization' });
+    
     const existing = await db.get('SELECT * FROM attendance WHERE employee_id = ? AND date = ? ORDER BY id DESC', [employee_id, date]);
     
     if (!existing) {

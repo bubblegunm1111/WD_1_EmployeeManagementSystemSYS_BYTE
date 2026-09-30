@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.require ? express.Router() : express.Router();
 const { getDbConnection } = require('../db');
+const { requireAuth } = require('../middleware/authMiddleware');
+
+router.use(requireAuth);
 
 // Helper to format dates
 const formatDate = (dateString) => {
@@ -20,8 +23,8 @@ router.post('/generate', async (req, res) => {
     const reportName = `${type} Report - ${period}`;
 
     // Base employee conditions
-    let empCondition = '1=1';
-    const params = [];
+    let empCondition = 'e.organization_id = ?';
+    const params = [req.organization_id];
     
     if (departmentId && departmentId !== 'all') {
       empCondition += ' AND e.department_id = ?';
@@ -312,8 +315,8 @@ router.post('/generate', async (req, res) => {
 
     // Log to history
     await db.run(
-      'INSERT INTO report_history (report_name, report_type, format, generated_by) VALUES (?, ?, ?, ?)',
-      [reportName, type, 'View', adminId || 1]
+      'INSERT INTO report_history (report_name, report_type, format, generated_by, organization_id) VALUES (?, ?, ?, ?, ?)',
+      [reportName, type, 'View', adminId || null, req.organization_id]
     );
 
     res.json({
@@ -338,9 +341,10 @@ router.get('/history', async (req, res) => {
       SELECT rh.*, e.first_name as admin_first, e.last_name as admin_last 
       FROM report_history rh
       LEFT JOIN employees e ON rh.generated_by = e.id
+      WHERE rh.organization_id = ?
       ORDER BY rh.created_at DESC
       LIMIT 20
-    `);
+    `, [req.organization_id]);
     res.json(history);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch report history' });
@@ -351,7 +355,7 @@ router.get('/history', async (req, res) => {
 router.get('/saved', async (req, res) => {
   try {
     const db = await getDbConnection();
-    const saved = await db.all('SELECT * FROM saved_reports ORDER BY id DESC');
+    const saved = await db.all('SELECT * FROM saved_reports WHERE organization_id = ? ORDER BY id DESC', [req.organization_id]);
     if (saved.length === 0) {
       const mocks = [
         { id: 1, name: 'Monthly Payroll Report', report_type: 'Payroll', last_generated: new Date().toISOString() },

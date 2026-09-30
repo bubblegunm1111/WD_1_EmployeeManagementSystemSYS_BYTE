@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import EmployeeList from './EmployeeList';
 import EmployeeModal from './EmployeeModal';
 import EditEmployeeModal from './EditEmployeeModal';
-import { Search, Bell, Users, UserCheck, UserMinus, UserX, Plus, List, LayoutGrid, ChevronRight } from 'lucide-react';
+import { Search, Bell, Users, UserCheck, UserMinus, UserX, Plus, List, LayoutGrid, ChevronRight, Download } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 import { EventBus } from './Layout';
@@ -126,6 +126,24 @@ function Dashboard() {
           </div>
 
           <div className="flex items-center gap-2 bg-gray-50 p-1 rounded-full border border-gray-200">
+            <button 
+              onClick={() => {
+                const csvContent = "data:text/csv;charset=utf-8,First Name,Last Name,Email,Position,Department,Status,Salary\n" 
+                  + "John,Doe,john@example.com,Engineer,Engineering,Active,85000\n"
+                  + "Jane,Smith,jane@example.com,Designer,Design,Active,90000";
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "employees_export.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
+              className="px-4 py-1.5 rounded-full hover:bg-white hover:shadow-sm text-sm font-bold text-gray-500 hover:text-green-600 transition flex items-center gap-2 cursor-pointer"
+            >
+              <Download size={16} /> Export
+            </button>
+            <div className="w-px h-6 bg-gray-200 mx-1"></div>
             <button 
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-full transition ${viewMode === 'list' ? 'bg-white shadow-sm text-[#8b8cf8]' : 'text-gray-400 hover:text-gray-600'}`}

@@ -3,8 +3,11 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { getDbConnection } = require('../db');
 const firebaseAuth = require('../firebase');
+const { requireAuth } = require('../middleware/authMiddleware');
 
 const router = express.Router();
+router.use(requireAuth);
+
 
 // Get all employees
 router.get('/', async (req, res) => {
@@ -30,8 +33,9 @@ router.get('/', async (req, res) => {
       LEFT JOIN employees m ON e.manager_id = m.id
       LEFT JOIN departments d ON e.department_id = d.id
       LEFT JOIN teams t ON e.team_id = t.id
+      WHERE e.organization_id = ?
       ORDER BY e.id DESC
-    `);
+    `, [req.organization_id]);
     res.json(employees);
   } catch (error) {
     console.error(error);
@@ -44,7 +48,7 @@ router.get('/by-email', async (req, res) => {
   try {
     const { email } = req.query;
     const db = await getDbConnection();
-    const employee = await db.get('SELECT * FROM employees WHERE email = ?', [email]);
+    const employee = await db.get('SELECT * FROM employees WHERE email = ? AND organization_id = ?', [email, req.organization_id]);
     if (!employee) return res.status(404).json({ error: 'Employee not found' });
     res.json(employee);
   } catch (error) {
@@ -58,7 +62,7 @@ router.put('/:id/reset-status', async (req, res) => {
   try {
     const id = req.params.id;
     const db = await getDbConnection();
-    await db.run('UPDATE employees SET requires_password_reset = 0 WHERE id = ?', [id]);
+    await db.run('UPDATE employees SET requires_password_reset = 0 WHERE id = ? AND organization_id = ?', [id, req.organization_id]);
     res.json({ message: 'Password reset status updated' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to update status' });
@@ -78,8 +82,8 @@ router.put('/:id/onboarding', async (req, res) => {
         dob = ?, gender = ?, personal_email = ?, address = ?, city = ?, country = ?, 
         emergency_name = ?, emergency_relation = ?, emergency_phone = ?, 
         bank_name = ?, bank_account = ?
-       WHERE id = ?`,
-      [dob, gender, personal_email, address, city, country, emergency_name, emergency_relation, emergency_phone, bank_name, bank_account, id]
+       WHERE id = ? AND organization_id = ?`,
+      [dob, gender, personal_email, address, city, country, emergency_name, emergency_relation, emergency_phone, bank_name, bank_account, id, req.organization_id]
     );
     res.json({ message: 'Onboarding completed successfully' });
   } catch (error) {
@@ -125,9 +129,9 @@ router.post('/', async (req, res) => {
 
     const db = await getDbConnection();
     const result = await db.run(
-      `INSERT INTO employees (first_name, last_name, email, phone_number, position, department, status, salary, basic_salary, accommodation, transportation, hire_date, firebase_uid, requires_password_reset, department_id, team_id, manager_id) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [first_name, last_name, email, phone_number || '', position, department || '', status || 'Active', finalSalary, finalSalary, accommodation || 0, transportation || 0, hire_date, firebaseUid, 1, department_id || null, team_id || null, manager_id || null]
+      `INSERT INTO employees (first_name, last_name, email, phone_number, position, department, status, salary, basic_salary, accommodation, transportation, hire_date, firebase_uid, requires_password_reset, department_id, team_id, manager_id, organization_id) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [first_name, last_name, email, phone_number || '', position, department || '', status || 'Active', finalSalary, finalSalary, accommodation || 0, transportation || 0, hire_date, firebaseUid, 1, department_id || null, team_id || null, manager_id || null, req.organization_id]
     );
 
     // Send Email using Nodemailer
@@ -192,8 +196,8 @@ router.put('/:id', async (req, res) => {
     await db.run(
       `UPDATE employees SET 
         first_name = ?, last_name = ?, email = ?, phone_number = ?, position = ?, department = ?, status = ?, salary = ?, basic_salary = ?, accommodation = ?, transportation = ?, department_id = ?, team_id = ?, manager_id = ?
-       WHERE id = ?`,
-      [first_name, last_name, email, phone_number || '', position, department || '', status || 'Active', finalSalary, finalSalary, accommodation || 0, transportation || 0, department_id || null, team_id || null, manager_id || null, req.params.id]
+       WHERE id = ? AND organization_id = ?`,
+      [first_name, last_name, email, phone_number || '', position, department || '', status || 'Active', finalSalary, finalSalary, accommodation || 0, transportation || 0, department_id || null, team_id || null, manager_id || null, req.params.id, req.organization_id]
     );
     
     res.json({ message: 'Employee updated successfully' });
@@ -203,11 +207,10 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete employee
 router.delete('/:id', async (req, res) => {
   try {
     const db = await getDbConnection();
-    await db.run('DELETE FROM employees WHERE id = ?', [req.params.id]);
+    await db.run('DELETE FROM employees WHERE id = ? AND organization_id = ?', [req.params.id, req.organization_id]);
     res.json({ message: 'Employee deleted successfully' });
   } catch (error) {
     console.error(error);

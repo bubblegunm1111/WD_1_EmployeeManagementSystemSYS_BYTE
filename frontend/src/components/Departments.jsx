@@ -45,8 +45,11 @@ function Departments() {
     }
   };
 
+  const [formError, setFormError] = useState('');
+
   const handleAddSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
     try {
       await api.post('/departments', formData);
       setIsModalOpen(false);
@@ -54,7 +57,7 @@ function Departments() {
       fetchDepartments();
     } catch (err) {
       console.error(err);
-      alert("Failed to create department");
+      setFormError(err.response?.data?.error || "Failed to create department");
     }
   };
 
@@ -145,6 +148,8 @@ function Departments() {
           <div className="bg-white rounded-3xl w-full max-w-lg p-8 shadow-2xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-2xl font-extrabold text-[#1e293b] mb-6">Create New Department</h2>
             
+            {formError && <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-bold">{formError}</div>}
+
             <form onSubmit={handleAddSubmit} className="flex flex-col gap-5">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1">Department Name <span className="text-red-500">*</span></label>

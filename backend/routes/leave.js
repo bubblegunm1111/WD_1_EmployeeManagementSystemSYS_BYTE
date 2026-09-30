@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { getDbConnection } = require('../db');
+const { requireAuth } = require('../middleware/authMiddleware');
+
+router.use(requireAuth);
 
 // GET all leaves with employee details
 router.get('/', async (req, res) => {
@@ -14,8 +17,9 @@ router.get('/', async (req, res) => {
         e.department
       FROM leaves l
       JOIN employees e ON l.employee_id = e.id
+      WHERE e.organization_id = ?
       ORDER BY l.start_date DESC
-    `);
+    `, [req.organization_id]);
     res.json(leaves);
   } catch (error) {
     console.error('Error fetching leaves:', error);
@@ -33,6 +37,11 @@ router.post('/', async (req, res) => {
     }
 
     const db = await getDbConnection();
+    
+    // Verify ownership
+    const emp = await db.get('SELECT id FROM employees WHERE id = ? AND organization_id = ?', [employee_id, req.organization_id]);
+    if (!emp) return res.status(403).json({ error: 'Employee not found in organization' });
+
     const result = await db.run(`
       INSERT INTO leaves (employee_id, leave_type, start_date, end_date, duration_days, status, reason)
       VALUES (?, ?, ?, ?, ?, 'Pending', ?)
@@ -54,6 +63,11 @@ router.put('/:id/status', async (req, res) => {
     }
 
     const db = await getDbConnection();
+    
+    // Verify ownership via join
+    const leave = await db.get('SELECT l.id FROM leaves l JOIN employees e ON l.employee_id = e.id WHERE l.id = ? AND e.organization_id = ?', [req.params.id, req.organization_id]);
+    if (!leave) return res.status(403).json({ error: 'Leave request not found or access denied' });
+
     await db.run('UPDATE leaves SET status = ? WHERE id = ?', [status, req.params.id]);
     
     res.json({ message: 'Leave status updated successfully' });

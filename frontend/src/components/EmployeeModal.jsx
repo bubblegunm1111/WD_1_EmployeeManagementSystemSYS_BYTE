@@ -29,33 +29,40 @@ function EmployeeModal({ isOpen, onClose, onSuccess, initialData }) {
     setStep(1);
     setIsSuccess(false);
     setTempPassword('');
+    setFormError('');
   }, [initialData, isOpen]);
 
   if (!isOpen) return null;
 
   const handleChange = (e) => {
+    setFormError('');
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleNext = () => {
+    setFormError('');
     if (step === 1) {
       if (!formData.firstName || !formData.lastName || !formData.email) {
-        alert('Please fill in all required fields (First Name, Last Name, Email Address) to continue.');
-        return;
+      setFormError('Please fill in all required fields (First Name, Last Name, Email Address) to continue.');
+      return;
       }
     }
     if (step === 2) {
       if (!formData.position || !formData.salary) {
-        alert('Please fill in all required fields (Job Title, Salary) to continue.');
-        return;
+      setFormError('Please fill in all required fields (Job Title, Salary) to continue.');
+      return;
       }
     }
     setStep(step + 1);
   };
-  const handleBack = () => setStep(step - 1);
+  const handleBack = () => {
+    setFormError('');
+    setStep(step - 1);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
     try {
       const payload = {
         first_name: formData.firstName,
@@ -68,8 +75,8 @@ function EmployeeModal({ isOpen, onClose, onSuccess, initialData }) {
       };
 
       if (!payload.first_name || !payload.last_name || !payload.email || !payload.position || !payload.salary) {
-        alert('Please fill in all required fields (Name, Email, Position, Salary).');
-        return;
+      setFormError('Please fill in all required fields (Name, Email, Position, Salary).');
+      return;
       }
 
       if (initialData) {
@@ -91,7 +98,7 @@ function EmployeeModal({ isOpen, onClose, onSuccess, initialData }) {
     } catch (error) {
       console.error('Failed to save employee', error);
       const errMsg = error.response?.data?.error || 'Error saving employee';
-      alert(`Error: ${errMsg}`);
+      setFormError(`Error: ${errMsg}`);
     }
   };
 
@@ -129,6 +136,12 @@ function EmployeeModal({ isOpen, onClose, onSuccess, initialData }) {
 
         {/* Form Body */}
         <div className="px-10 py-10 bg-[#fdfcfa] flex-1">
+          {formError && (
+            <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-bold">
+              {formError}
+            </div>
+          )}
+
           {isSuccess && (
             <div className="flex flex-col items-center justify-center py-10 animate-in zoom-in duration-500">
               <div className="w-20 h-20 bg-[#dcfce7] rounded-full flex items-center justify-center text-[#16a34a] mb-6 shadow-sm">

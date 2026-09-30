@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { getDbConnection } = require('../db');
+const { requireAuth } = require('../middleware/authMiddleware');
+
+router.use(requireAuth);
 
 // Helper to ensure payroll record exists for an employee and month
 async function getOrCreatePayrollRecord(db, employee, month) {
@@ -41,7 +44,7 @@ router.get('/', async (req, res) => {
     if (!month) return res.status(400).json({ error: 'Month parameter is required (YYYY-MM)' });
     
     const db = await getDbConnection();
-    const employees = await db.all('SELECT * FROM employees');
+    const employees = await db.all('SELECT * FROM employees WHERE organization_id = ?', [req.organization_id]);
     
     const records = [];
     for (const emp of employees) {
@@ -73,8 +76,8 @@ router.get('/:employeeId', async (req, res) => {
       SELECT e.*, d.name as department_name 
       FROM employees e 
       LEFT JOIN departments d ON e.department_id = d.id 
-      WHERE e.id = ?
-    `, [employeeId]);
+      WHERE e.id = ? AND e.organization_id = ?
+    `, [employeeId, req.organization_id]);
     
     if (!employee) return res.status(404).json({ error: 'Employee not found' });
     
@@ -102,6 +105,11 @@ router.put('/:employeeId', async (req, res) => {
     if (!month) return res.status(400).json({ error: 'Month is required' });
     
     const db = await getDbConnection();
+    
+    // Verify ownership
+    const emp = await db.get('SELECT id FROM employees WHERE id = ? AND organization_id = ?', [employeeId, req.organization_id]);
+    if (!emp) return res.status(403).json({ error: 'Employee not found in organization' });
+
     await db.run(`
       UPDATE payroll_records SET 
         bonus = ?, overtime = ?, loan = ?, absence = ?, penalty = ?, personal_expenses = ?, others = ?, updated_at = CURRENT_TIMESTAMP
@@ -125,6 +133,11 @@ router.post('/:employeeId/pay', async (req, res) => {
     if (!month) return res.status(400).json({ error: 'Month is required' });
     
     const db = await getDbConnection();
+    
+    // Verify ownership
+    const emp = await db.get('SELECT id FROM employees WHERE id = ? AND organization_id = ?', [employeeId, req.organization_id]);
+    if (!emp) return res.status(403).json({ error: 'Employee not found in organization' });
+
     await db.run(`
       UPDATE payroll_records SET status = 'Paid', updated_at = CURRENT_TIMESTAMP
       WHERE employee_id = ? AND month = ?
@@ -144,10 +157,11 @@ router.get('/history/:employeeId', async (req, res) => {
     const db = await getDbConnection();
     
     const records = await db.all(`
-      SELECT * FROM payroll_records 
-      WHERE employee_id = ? 
-      ORDER BY month DESC
-    `, [employeeId]);
+      SELECT p.* FROM payroll_records p
+      JOIN employees e ON p.employee_id = e.id
+      WHERE p.employee_id = ? AND e.organization_id = ?
+      ORDER BY p.month DESC
+    `, [employeeId, req.organization_id]);
     
     res.json(records);
   } catch (error) {
@@ -165,6 +179,11 @@ router.post('/issues', async (req, res) => {
     }
     
     const db = await getDbConnection();
+    
+    // Verify ownership
+    const emp = await db.get('SELECT id FROM employees WHERE id = ? AND organization_id = ?', [employee_id, req.organization_id]);
+    if (!emp) return res.status(403).json({ error: 'Employee not found in organization' });
+
     const result = await db.run(`
       INSERT INTO payroll_issues (employee_id, month, issue_type, description, status)
       VALUES (?, ?, ?, ?, 'Open')
@@ -185,8 +204,9 @@ router.get('/issues/all', async (req, res) => {
       SELECT i.*, e.first_name, e.last_name 
       FROM payroll_issues i
       JOIN employees e ON i.employee_id = e.id
+      WHERE e.organization_id = ?
       ORDER BY i.created_at DESC
-    `);
+    `, [req.organization_id]);
     res.json(issues);
   } catch (error) {
     console.error('Error fetching issues:', error);
@@ -200,6 +220,10 @@ router.put('/issues/:id', async (req, res) => {
     const { id } = req.params;
     const db = await getDbConnection();
     
+    // Verify ownership via join
+    const issue = await db.get('SELECT i.id FROM payroll_issues i JOIN employees e ON i.employee_id = e.id WHERE i.id = ? AND e.organization_id = ?', [id, req.organization_id]);
+    if (!issue) return res.status(403).json({ error: 'Issue not found or access denied' });
+
     await db.run(`
       UPDATE payroll_issues SET status = 'Resolved' WHERE id = ?
     `, [id]);

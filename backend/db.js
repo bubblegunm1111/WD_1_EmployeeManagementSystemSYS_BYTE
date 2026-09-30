@@ -22,6 +22,13 @@ async function initDb() {
       password TEXT
     );
     
+    CREATE TABLE IF NOT EXISTS organizations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      admin_firebase_uid TEXT UNIQUE NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    
     CREATE TABLE IF NOT EXISTS employees (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       first_name TEXT NOT NULL,
@@ -117,6 +124,35 @@ async function initDb() {
     await db.exec(`ALTER TABLE employees ADD COLUMN manager_id INTEGER;`);
   }
   
+  // Safely add organization_id to top-level tables
+  try { await db.exec('ALTER TABLE employees ADD COLUMN organization_id INTEGER REFERENCES organizations(id);'); } catch (e) { }
+  try { await db.exec('ALTER TABLE departments ADD COLUMN organization_id INTEGER REFERENCES organizations(id);'); } catch (e) { }
+  try { await db.exec('ALTER TABLE teams ADD COLUMN organization_id INTEGER REFERENCES organizations(id);'); } catch (e) { }
+  
+  // Data Migration for existing single-tenant data
+  // Check if organizations table is empty
+  const orgCount = await db.get('SELECT COUNT(*) as count FROM organizations');
+  if (orgCount.count === 0) {
+    // Check if there are any employees (meaning this is an existing database being upgraded)
+    const empCount = await db.get('SELECT COUNT(*) as count FROM employees');
+    if (empCount.count > 0) {
+      console.log('Migrating existing data to default organization...');
+      // We know sys1.admin.system@gmail.com is the hardcoded admin. We'll use a dummy UID for now, but this should ideally match their real Firebase UID
+      // Actually, since authMiddleware will look up by firebase_uid, and sys1.admin.system@gmail.com uses Firebase, let's create it with their actual UID if we can find it.
+      // Wait, sys1.admin.system@gmail.com is NOT in the employees table. It's just a Firebase account. We'll just create the org with their hardcoded UID or a placeholder and let them claim it.
+      // Actually, the easiest way is to let the authMiddleware automatically create the default org if it doesn't exist when sys1 signs in.
+      
+      // Let's create the default org now.
+      const result = await db.run(`INSERT INTO organizations (name, admin_firebase_uid) VALUES ('SYS (Default)', 'sys1-admin-default-uid')`);
+      const defaultOrgId = result.lastID;
+      
+      // Update all existing records to belong to this default organization
+      await db.run('UPDATE employees SET organization_id = ? WHERE organization_id IS NULL', [defaultOrgId]);
+      await db.run('UPDATE departments SET organization_id = ? WHERE organization_id IS NULL', [defaultOrgId]);
+      await db.run('UPDATE teams SET organization_id = ? WHERE organization_id IS NULL', [defaultOrgId]);
+      console.log('Data migration complete. Default Organization ID:', defaultOrgId);
+    }
+  }
   // Create Payroll Records Table
   await db.exec(`
     CREATE TABLE IF NOT EXISTS payroll_records (
@@ -173,14 +209,14 @@ async function initDb() {
   try { await db.exec('ALTER TABLE employees ADD COLUMN bank_name TEXT;'); } catch (e) { }
   try { await db.exec('ALTER TABLE employees ADD COLUMN bank_account TEXT;'); } catch (e) { }
 
-  // Create Report History and Saved Reports
   await db.exec(`
     CREATE TABLE IF NOT EXISTS saved_reports (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       report_type TEXT NOT NULL,
       filters_json TEXT,
-      last_generated TEXT
+      last_generated TEXT,
+      organization_id INTEGER REFERENCES organizations(id)
     )
   `);
 
@@ -192,9 +228,13 @@ async function initDb() {
       format TEXT NOT NULL,
       generated_by INTEGER,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      organization_id INTEGER REFERENCES organizations(id),
       FOREIGN KEY (generated_by) REFERENCES employees(id)
     )
   `);
+
+  try { await db.exec('ALTER TABLE saved_reports ADD COLUMN organization_id INTEGER REFERENCES organizations(id);'); } catch (e) { }
+  try { await db.exec('ALTER TABLE report_history ADD COLUMN organization_id INTEGER REFERENCES organizations(id);'); } catch (e) { }
 
   return db;
 }

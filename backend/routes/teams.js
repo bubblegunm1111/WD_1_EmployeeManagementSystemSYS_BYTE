@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { getDbConnection } = require('../db');
+const { requireAuth } = require('../middleware/authMiddleware');
+
+router.use(requireAuth);
 
 // Create a team
 router.post('/', async (req, res) => {
@@ -8,16 +11,16 @@ router.post('/', async (req, res) => {
     const { name, department_id, manager_id, employee_ids } = req.body;
     const db = await getDbConnection();
     const result = await db.run(`
-      INSERT INTO teams (name, department_id, manager_id)
-      VALUES (?, ?, ?)
-    `, [name, department_id, manager_id || null]);
+      INSERT INTO teams (name, department_id, manager_id, organization_id)
+      VALUES (?, ?, ?, ?)
+    `, [name, department_id, manager_id || null, req.organization_id]);
     
     // Assign selected employees to this team
     if (employee_ids && Array.isArray(employee_ids) && employee_ids.length > 0) {
       const placeholders = employee_ids.map(() => '?').join(',');
       await db.run(`
-        UPDATE employees SET team_id = ?, department_id = ? WHERE id IN (${placeholders})
-      `, [result.lastID, department_id, ...employee_ids]);
+        UPDATE employees SET team_id = ?, department_id = ? WHERE id IN (${placeholders}) AND organization_id = ?
+      `, [result.lastID, department_id, ...employee_ids, req.organization_id]);
     }
     
     res.status(201).json({ id: result.lastID, ...req.body });
@@ -34,19 +37,19 @@ router.put('/:id', async (req, res) => {
     await db.run(`
       UPDATE teams 
       SET name = ?, department_id = ?, manager_id = ?
-      WHERE id = ?
-    `, [name, department_id, manager_id || null, req.params.id]);
+      WHERE id = ? AND organization_id = ?
+    `, [name, department_id, manager_id || null, req.params.id, req.organization_id]);
 
     if (employee_ids !== undefined) {
       // First, clear team_id for everyone currently in this team
-      await db.run(`UPDATE employees SET team_id = NULL WHERE team_id = ?`, [req.params.id]);
+      await db.run(`UPDATE employees SET team_id = NULL WHERE team_id = ? AND organization_id = ?`, [req.params.id, req.organization_id]);
       
       // Then assign the new ones
       if (Array.isArray(employee_ids) && employee_ids.length > 0) {
         const placeholders = employee_ids.map(() => '?').join(',');
         await db.run(`
-          UPDATE employees SET team_id = ?, department_id = ? WHERE id IN (${placeholders})
-        `, [req.params.id, department_id, ...employee_ids]);
+          UPDATE employees SET team_id = ?, department_id = ? WHERE id IN (${placeholders}) AND organization_id = ?
+        `, [req.params.id, department_id, ...employee_ids, req.organization_id]);
       }
     }
     
@@ -60,8 +63,8 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const db = await getDbConnection();
-    await db.run('DELETE FROM teams WHERE id = ?', [req.params.id]);
-    await db.run('UPDATE employees SET team_id = NULL WHERE team_id = ?', [req.params.id]);
+    await db.run('DELETE FROM teams WHERE id = ? AND organization_id = ?', [req.params.id, req.organization_id]);
+    await db.run('UPDATE employees SET team_id = NULL WHERE team_id = ? AND organization_id = ?', [req.params.id, req.organization_id]);
     res.json({ message: 'Team deleted' });
   } catch (error) {
     res.status(500).json({ error: error.message });
